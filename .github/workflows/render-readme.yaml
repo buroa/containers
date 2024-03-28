@@ -1,0 +1,55 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Render Readme"
+
+on:
+  workflow_call:
+    secrets:
+      BOT_APP_ID:
+        description: The App ID of the GitHub App
+        required: true
+      BOT_APP_PRIVATE_KEY:
+        description: The private key of the GitHub App
+        required: true
+
+jobs:
+  render-readme:
+    name: Render README
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: pip
+
+      - name: Install Python Requirements
+        shell: bash
+        run: pip install -r ./.github/scripts/requirements.txt && pip freeze
+
+      - name: Render README
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+        shell: bash
+        run: python ./.github/scripts/render-readme.py
+
+      - name: Commit Changes
+        shell: bash
+        run: |
+          git config --global user.name "bot-blake"
+          git config --global user.email "129223303+bot-blake[bot]@users.noreply.github.com"
+          git add ./README.md
+          git commit -m "chore: render README.md" || echo "No changes to commit"
+          git push origin || echo "No changes to push"

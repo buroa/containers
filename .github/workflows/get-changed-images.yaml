@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Get Changed Images"
+
+on:
+  workflow_call:
+    outputs:
+      addedOrModified:
+        description: "Whether any files were added or modified"
+        value: ${{ jobs.get-changed-images.outputs.addedOrModified }}
+      addedOrModifiedImages:
+        description: "The images that were added or modified"
+        value: ${{ jobs.get-changed-images.outputs.addedOrModifiedImages }}
+
+jobs:
+  get-changed-images:
+    name: Get Changed Images
+    runs-on: ubuntu-latest
+    outputs:
+      addedOrModified: "${{ steps.changed-files.outputs.all_changed_and_modified_files_count > 0 }}"
+      addedOrModifiedImages: "${{ steps.changed-containers.outputs.addedOrModifiedImages }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: apps/**
+          dir_names: true
+          dir_names_max_depth: 2
+          json: true
+          escape_json: false
+
+      - if: ${{ steps.changed-files.outputs.all_changed_and_modified_files_count > 0 }}
+        name: Determine changed images
+        id: changed-containers
+        shell: bash
+        run: |
+          IMAGES=$( \
+              echo '${{ steps.changed-files.outputs.all_changed_and_modified_files }}' \
+                  | jq --raw-output 'map(sub("^apps/"; "")) | join(",")' \
+          )
+          echo "addedOrModifiedImages=${IMAGES}" >> $GITHUB_OUTPUT

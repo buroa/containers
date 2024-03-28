@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Simple Checks"
+
+on:
+  workflow_call:
+
+jobs:
+  metadata-validation:
+    name: Validate Image Metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files_yaml: |
+            cue:
+              - metadata.rules.cue
+              - apps/**/metadata.json
+              - apps/**/metadata.yaml
+
+      - name: Setup CUE
+        if: ${{ steps.changed-files.outputs.cue_any_changed == 'true' }}
+        uses: cue-lang/setup-cue@v1.0.1
+
+      # Run against all files to ensure they are tested if the cue schema is changed.
+      - name: Validate image metadata
+        if: ${{ steps.changed-files.outputs.cue_any_changed == 'true' }}
+        shell: bash
+        run: |
+          find ./apps/ -name metadata.json | xargs -I {} cue vet --schema '#Spec' {} ./metadata.rules.cue
+          find ./apps/ -name metadata.yaml | xargs -I {} cue vet --schema '#Spec' {} ./metadata.rules.cue

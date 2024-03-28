@@ -1,0 +1,55 @@
+---
+version: "3"
+
+vars:
+  CHANNEL: '{{ default "stable" .CHANNEL }}'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task -l
+
+  test:
+    desc: |-
+      task APP=<app> CHANNEL=<channel> BASE=<true/false> test
+    cmds:
+      - task: download-goss
+      - >-
+        cue vet --schema '#Spec' ./apps/{{.APP}}/metadata.json metadata.rules.cue
+      - >-
+        docker buildx build --progress=plain --load
+        -t {{.APP}}:{{.CHANNEL}}
+        --build-arg CHANNEL={{.CHANNEL}}
+        --build-arg VERSION=$(bash ./.github/scripts/upstream.sh "{{.APP}}" "{{.CHANNEL}}")
+        {{if eq .MULTIPLATFORM "true"}}
+        --platform $(jq -r '.channels[] | select(.name=="{{.CHANNEL}}").platforms | join(",")' ./apps/{{.APP}}/metadata.json)
+        {{else}}
+        --platform "linux/$(uname -m | sed 's/x86_64/amd64/')"
+        {{end}}
+        -f ./apps/{{.APP}}/Dockerfile .
+      - >-
+        ./.goss/dgoss run {{.APP}}:{{.CHANNEL}} {{if eq .BASE "true"}}tail -f /dev/null{{end}}
+    env:
+      CONTAINER_RUNTIME: docker
+      GOSS_PATH: ./.goss/goss
+      GOSS_OPTS: --sleep 5s --retry-timeout 60s --color --format documentation
+      GOSS_SLEEP: 2
+      GOSS_FILE: ./apps/{{.APP}}/ci/goss.yaml
+      GOSS_FILES_STRATEGY: cp
+    vars:
+      MULTIPLATFORM: '{{ default "false" .MULTIPLATFORM }}'
+
+  download-goss:
+    silent: true
+    vars:
+      GOSS_VERSION: v0.3.21
+    cmds:
+      - mkdir -p ./.goss
+      - curl -fsSL -o ./.goss/goss https://github.com/aelsabbahy/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-amd64
+      - chmod +x ./.goss/goss
+      - curl -fsSL -o ./.goss/dgoss https://raw.githubusercontent.com/aelsabbahy/goss/{{.GOSS_VERSION}}/extras/dgoss/dgoss
+      - chmod +x ./.goss/dgoss
+    status:
+      - test -f ./.goss/goss
+      - test -f ./.goss/dgoss
