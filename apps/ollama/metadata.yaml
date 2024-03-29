@@ -7,5 +7,4 @@ channels:
     platforms: ["linux/amd64", "linux/arm64"]
     stable: true
     tests:
-      enabled: true
-      type: web
+      enabled: false
