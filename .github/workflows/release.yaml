@@ -1,0 +1,51 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
+
+      - name: Create Release
+        shell: bash
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+        run: |
+          # Retrieve previous release tag
+          previous_tag="$(gh release list --limit 1 | awk '{ print $1 }')"
+          previous_major="${previous_tag%%\.*}"
+          previous_minor="${previous_tag#*.}"
+          previous_minor="${previous_minor%.*}"
+          previous_patch="${previous_tag##*.}"
+          # Determine next release tag
+          next_major_minor="$(date +'%Y').$(date +'%-m')"
+          if [[ "${previous_major}.${previous_minor}" == "${next_major_minor}" ]]; then
+              echo "Month release already exists for year, incrementing patch number by 1"
+              next_patch="$((previous_patch + 1))"
+          else
+              echo "Month release does not exist for year, setting patch number to 0"
+              next_patch="0"
+          fi
+          # Create release
+          release_tag="${next_major_minor}.${next_patch}"
+          gh release create "${release_tag}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${release_tag}" \
+              --generate-notes
