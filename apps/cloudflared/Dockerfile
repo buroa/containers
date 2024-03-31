@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22.1-bookworm as builder
+FROM golang:1.21.5 as builder
 
 ARG VERSION
 ARG TARGETOS
@@ -15,15 +15,13 @@ ENV GO111MODULE=on \
 WORKDIR /build
 
 RUN \
-    apt-get update \
-    && apt-get install --no-install-recommends -y git
-
-RUN \
     git clone --depth 1 --branch ${VERSION} https://github.com/cloudflare/cloudflared.git .
 
 RUN .teamcity/install-cloudflare-go.sh
 
-RUN PATH=/tmp/go/bin:${PATH} make cloudflared
+ENV PATH=/tmp/go/bin:${PATH}
+
+RUN make cloudflared
 
 FROM gcr.io/distroless/base-debian11:nonroot
 
