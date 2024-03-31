@@ -5,6 +5,7 @@ ARG VERSION
 ARG CHANNEL
 
 ENV \
+    COMPlus_EnableDiagnostics="0" \
     PROWLARR__INSTANCE_NAME="Prowlarr" \
     PROWLARR__BRANCH="${CHANNEL}" \
     PROWLARR__PORT="9696" \

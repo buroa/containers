@@ -5,6 +5,7 @@ ARG VERSION
 ARG CHANNEL
 
 ENV \
+    COMPlus_EnableDiagnostics="0" \
     SONARR__INSTANCE_NAME="Sonarr" \
     SONARR__BRANCH="${CHANNEL}" \
     SONARR__PORT="8989" \
