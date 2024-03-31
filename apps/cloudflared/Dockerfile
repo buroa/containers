@@ -20,10 +20,9 @@ RUN PATH=/tmp/go/bin:${PATH} make cloudflared
 
 FROM gcr.io/distroless/base-debian11:nonroot
 
-COPY --from=builder --chown=nonroot /build/cloudflared /usr/local/bin/
+COPY --from=builder --chown=nonroot /build/cloudflared /usr/local/bin/cloudflared
 
 USER nonroot
-ENTRYPOINT ["cloudflared", "--no-autoupdate"]
-CMD ["version"]
+ENTRYPOINT ["/usr/local/bin/cloudflared"]
 
 LABEL org.opencontainers.image.source="https://github.com/cloudflare/cloudflared"
