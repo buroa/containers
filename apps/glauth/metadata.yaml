@@ -1,11 +1,11 @@
 ---
-app: volsync
+app: glauth
 base: false
 semantic_versioning: true
 channels:
-  - name: stable
+  - name: master
     platforms: ["linux/amd64", "linux/arm64"]
     stable: true
     tests:
-      enabled: false
+      enabled: true
       type: cli
