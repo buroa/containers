@@ -1,0 +1,4 @@
+---
+file:
+  /usr/libexec/postgresql16/psql:
+    exists: true

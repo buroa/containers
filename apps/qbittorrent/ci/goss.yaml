@@ -1,0 +1,16 @@
+---
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#process
+process:
+  qbittorrent-nox:
+    running: true
+
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#port
+port:
+  # https://github.com/aelsabbahy/goss/issues/149
+  tcp6:8080:
+    listening: true
+
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#http
+http:
+  http://localhost:8080:
+    status: 200

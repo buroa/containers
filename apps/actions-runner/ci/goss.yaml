@@ -1,0 +1,5 @@
+---
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#file
+file:
+  /usr/bin/git:
+    exists: true
