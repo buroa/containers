@@ -8,5 +8,4 @@ exec \
     /usr/local/bin/cloudflared \
         tunnel \
             --config /etc/cloudflared/config/config.yaml \
-            --run ${TUNNEL_ID} \
-                "$@"
+            run ${TUNNEL_ID}
