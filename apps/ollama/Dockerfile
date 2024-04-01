@@ -6,15 +6,6 @@ ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
-ENV \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
-
 WORKDIR /build
 
 RUN \
@@ -48,11 +39,10 @@ ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_VISIBLE_DEVICES=all
 
-COPY --from=builder --chown=kah /build/bin/ollama /usr/local/bin/ollama
-
 USER kah
 WORKDIR /home/kah/.ollama
-ENTRYPOINT ["/usr/local/bin/ollama"]
-CMD ["serve"]
+COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
+COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
+CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/ollama/ollama"

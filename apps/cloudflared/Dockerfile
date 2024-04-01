@@ -1,4 +1,4 @@
-FROM golang:1.22.1 as builder
+FROM docker.io/library/alpine:3.19 as builder
 
 ARG VERSION
 ARG TARGETOS
@@ -15,19 +15,16 @@ ENV GO111MODULE=on \
 WORKDIR /build
 
 RUN \
-    git clone --depth 1 --branch ${VERSION} https://github.com/cloudflare/cloudflared.git .
+    apk add --no-cache bash git go make upx \
+    && git clone --depth 1 --branch ${VERSION} https://github.com/cloudflare/cloudflared.git . \
+    && make cloudflared \
+    && upx cloudflared
 
-RUN .teamcity/install-cloudflare-go.sh
+FROM ghcr.io/buroa/alpine:rolling@sha256:f7d7798d8e6c5c3df13d393c50a3a315147d2101d7f4ee7300fac9f9d244860b
 
-ENV PATH=/tmp/go/bin:${PATH}
-
-RUN make cloudflared
-
-FROM gcr.io/distroless/base-debian11:nonroot
-
-COPY --from=builder --chown=nonroot /build/cloudflared /usr/local/bin/cloudflared
-
-USER nonroot
-ENTRYPOINT ["/usr/local/bin/cloudflared"]
+USER kah
+COPY --from=builder /build/cloudflared /usr/local/bin/cloudflared
+COPY ./apps/cloudflared/entrypoint.sh /entrypoint.sh
+CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/cloudflare/cloudflared"
