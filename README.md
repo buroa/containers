@@ -69,8 +69,6 @@ Container | Channel | Image
 --- | --- | ---
 [actions-runner](https://github.com/buroa/containers/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
 [bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
-[cloudflared](https://github.com/buroa/containers/pkgs/container/cloudflared) | master | ghcr.io/buroa/cloudflared
-[glauth](https://github.com/buroa/containers/pkgs/container/glauth) | master | ghcr.io/buroa/glauth
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [ollama](https://github.com/buroa/containers/pkgs/container/ollama) | main | ghcr.io/buroa/ollama
 [par2cmdline-turbo](https://github.com/buroa/containers/pkgs/container/par2cmdline-turbo) | stable | ghcr.io/buroa/par2cmdline-turbo
