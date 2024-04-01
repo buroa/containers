@@ -40,7 +40,7 @@ RUN \
             -X github.com/ollama/ollama/server.mode=release" \
     -o bin/ollama .
 
-FROM gcr.io/distroless/base-debian12:nonroot
+FROM ghcr.io/buroa/ubuntu:jammy-20240227@sha256:7606a9fe80ba47b2958eed8515d7f755c6b4939f37ab8329813ee6dce3fc1d6c
 
 ENV OLLAMA_HOST 0.0.0.0
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -48,10 +48,10 @@ ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_VISIBLE_DEVICES=all
 
-COPY --from=builder --chown=nonroot /build/bin/ollama /usr/local/bin/ollama
+COPY --from=builder --chown=kah /build/bin/ollama /usr/local/bin/ollama
 
-USER nonroot
-WORKDIR /.ollama
+USER kah
+WORKDIR /home/kah/.ollama
 ENTRYPOINT ["/usr/local/bin/ollama"]
 CMD ["serve"]
 
