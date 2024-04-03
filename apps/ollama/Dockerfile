@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22.1-bookworm as golang
+FROM docker.io/library/golang:1.22.2-bookworm as golang
 
 FROM docker.io/nvidia/cuda:12.3.2-devel-ubuntu22.04 as builder
 
