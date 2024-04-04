@@ -92,27 +92,16 @@ RUN \
         python3-dev \
         unixodbc-dev \
     && \
-    pip install --upgrade \
+    pip install --upgrade pip uv \
+    && \
+    uv pip install --system --upgrade \
         cython \
-        pip \
         pyparsing \
         setuptools \
         wheel \
     && \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \
-    && \
-    mkdir -p /pip-packages \
-    && \
-    pip install \
-        --upgrade \
-        --target /pip-packages \
-        distlib \
-    && \
-    NUMPY_VERSION=$(grep "numpy" requirements_all.txt) \
-    && \
-    pip install --find-links "${HOMEASSISTANT_WHEELS}" \
-        "${NUMPY_VERSION}" \
     && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') \
@@ -125,17 +114,14 @@ RUN \
     && \
     HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
-    pip install --no-index --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --system --no-index --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
     && \
-    pip install --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --system --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement requirements_all.txt \
     && \
-    pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         homeassistant=="${VERSION}" \
-    && \
-    pip install --find-links "${HOMEASSISTANT_WHEELS}" \
-        pycups PySwitchbot \
     && \
     apk del --purge .build-deps \
     && \
