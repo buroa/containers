@@ -41,9 +41,9 @@ RUN \
         cargo \
         python3-dev \
     && \
-    pip install --upgrade pip uv \
+    pip install --upgrade pip \
     && \
-    uv pip install --upgrade --requirement /app/requirements.txt \
+    pip install --upgrade --requirement /app/requirements.txt \
     && apk del --purge .build-deps \
     && rm -rf \
         /root/.cache \

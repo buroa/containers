@@ -26,9 +26,9 @@ RUN \
     && \
     apk add --no-cache --virtual .build-deps py3-pip gcc python3-dev musl-dev \
     && \
-    pip install --upgrade pip uv \
+    pip install --upgrade pip \
     && \
-    uv pip install --upgrade \
+    pip install --upgrade \
       "webrtcvad-wheels>=2.0.10" \
     && apk del --purge .build-deps \
     && rm -rf \
