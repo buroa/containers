@@ -1,6 +1,6 @@
 FROM docker.io/library/golang:1.22.2-bookworm as golang
 
-FROM docker.io/nvidia/cuda:12.3.2-devel-ubuntu22.04 as builder
+FROM docker.io/nvidia/cuda:12.4.0-devel-ubuntu22.04 as builder
 
 ARG TARGETPLATFORM
 ARG VERSION
