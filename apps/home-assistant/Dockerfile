@@ -1,24 +1,21 @@
 ARG VERSION
-FROM docker.io/library/alpine:3.19 as builder
+FROM docker.io/library/golang:1.22-alpine as builder
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
+ENV CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
-    GOARM=${TARGETVARIANT} \
-    GOPATH=/go
-ENV PATH $GOPATH/bin:$PATH
+    GOARM=${TARGETVARIANT}
 #hadolint ignore=DL3018
 RUN \
-    apk add --no-cache go upx \
+    apk add --no-cache upx \
     && go install -ldflags="-s -w" github.com/drone/envsubst/cmd/envsubst@latest \
     && upx /go/bin/envsubst
 
-FROM docker.io/library/python:3.12.2-alpine3.19
+FROM docker.io/library/python:3.12-alpine
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -40,41 +37,43 @@ ENV UMASK="0002" \
 
 WORKDIR /tmp
 
-#hadolint ignore=DL3018
+#hadolint ignore=DL3018,DL3013,DL3059,DL4006
 RUN \
     apk add --no-cache \
-        ca-certificates catatonit bash \
-        bind-tools coreutils curl iputils jo \
-        jq moreutils nano pv tzdata unzip \
-        util-linux wget
-
-#hadolint ignore=DL3018
-RUN \
-    apk add --no-cache \
+        bash \
+        bind-tools \
         bluez \
         bluez-deprecated \
         bluez-libs \
         ca-certificates \
+        catatonit \
+        coreutils \
         cups-libs \
+        curl \
         eudev-libs \
         ffmpeg \
         git \
+        iputils \
+        jo \
+        jq \
         libcap \
         libturbojpeg \
         libstdc++ \
         libxslt \
         mariadb-connector-c \
         mariadb-connector-c-dev \
+        moreutils \
+        nano \
         openssh-client \
         openssl \
         postgresql-libs \
-        py3-pip \
-        python3 \
         socat \
-        tiff
-
-#hadolint ignore=DL3018,DL3013,DL3059,DL4006
-RUN \
+        tiff \
+        tzdata \
+        unzip \
+        util-linux \
+        wget \
+    && \
     apk add --no-cache --virtual=.build-deps \
         autoconf \
         build-base \
@@ -89,16 +88,9 @@ RUN \
         libxml2-dev \
         libxslt-dev \
         postgresql-dev \
-        python3-dev \
         unixodbc-dev \
     && \
-    pip install --upgrade pip uv \
-    && \
-    uv pip install --system --upgrade \
-        cython \
-        pyparsing \
-        setuptools \
-        wheel \
+    pip install uv \
     && \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \
@@ -114,24 +106,15 @@ RUN \
     && \
     HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
-    uv pip install --system --no-index --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
     && \
-    uv pip install --system --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement requirements_all.txt \
     && \
     uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         homeassistant=="${VERSION}" \
     && \
-    apk del --purge .build-deps \
-    && \
-    rm -rf \
-        /root/.cache \
-        /root/.cargo \
-        /tmp/*
-
-#hadolint ignore=DL3018
-RUN \
     addgroup -S kah --gid 568 \
         && adduser -S kah -G kah --uid 568 \
     && \
@@ -140,13 +123,19 @@ RUN \
     && chmod -R 775 /config \
     && printf "/bin/bash /scripts/greeting.sh\n" > /etc/profile.d/greeting.sh \
     && printf "umask %d\n" "${UMASK}" > /etc/profile.d/umask.sh \
-    && ln -s /usr/bin/vi   /usr/local/bin/vi \
-    && ln -s /usr/bin/vi   /usr/local/bin/vim \
+    && ln -s /usr/bin/vi /usr/local/bin/vi \
+    && ln -s /usr/bin/vi /usr/local/bin/vim \
     && ln -s /usr/bin/nano /usr/local/bin/nano \
     && ln -s /usr/bin/nano /usr/local/bin/neovim \
     && ln -s /usr/bin/nano /usr/local/bin/emacs \
     && ln -s /usr/bin/catatonit /sbin/tini \
-    && rm -rf /tmp/*
+    && \
+    apk del --purge .build-deps \
+    && \
+    rm -rf \
+        /root/.cache \
+        /root/.cargo \
+        /tmp/*
 
 COPY --from=builder /go/bin/envsubst /usr/local/bin/envsubst
 COPY ./apps/home-assistant/scripts /scripts

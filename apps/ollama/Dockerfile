@@ -31,7 +31,7 @@ RUN \
             -X github.com/ollama/ollama/server.mode=release" \
     -o bin/ollama .
 
-FROM ghcr.io/buroa/ubuntu:jammy-20240227@sha256:7606a9fe80ba47b2958eed8515d7f755c6b4939f37ab8329813ee6dce3fc1d6c
+FROM docker.io/library/ubuntu:22.04
 
 ENV OLLAMA_HOST 0.0.0.0
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

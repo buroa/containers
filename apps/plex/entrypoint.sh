@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-#shellcheck disable=SC1091
-test -f "/scripts/umask.sh" && source "/scripts/umask.sh"
-
 #shellcheck disable=SC2155
 export PLEX_MEDIA_SERVER_INFO_MODEL=$(uname -m)
 #shellcheck disable=SC2155
