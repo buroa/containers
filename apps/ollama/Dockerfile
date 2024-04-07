@@ -9,7 +9,7 @@ ARG CHANNEL
 WORKDIR /build
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y cmake git \
+    && apt-get install --no-install-recommends -y ccache cmake git \
     && git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
 
 COPY --from=golang /usr/local/go/ /usr/local/go/
