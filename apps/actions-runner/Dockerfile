@@ -31,3 +31,5 @@ RUN \
 USER runner
 
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
