@@ -26,7 +26,7 @@ RUN go generate ./... \
             -X github.com/ollama/ollama/server.mode=release" \
     -o bin/ollama .
 
-FROM docker.io/library/ubuntu:22.04
+FROM docker.io/library/ubuntu:24.04
 
 ENV OLLAMA_HOST="0.0.0.0"
 
