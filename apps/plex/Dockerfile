@@ -1,14 +1,16 @@
-ARG VERSION
 FROM docker.io/library/golang:1.22 as envsubst
+
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
+
 ENV CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     GOARM=${TARGETVARIANT}
+
 RUN go install -ldflags="-s -w" github.com/drone/envsubst/cmd/envsubst@latest
 
 FROM docker.io/library/ubuntu:22.04
@@ -81,8 +83,8 @@ RUN \
 WORKDIR "${PLEX_MEDIA_SERVER_HOME}"
 
 COPY --from=envsubst /go/bin/envsubst /usr/local/bin/envsubst
-
 COPY ./apps/plex/entrypoint.sh /entrypoint.sh
-
 ENTRYPOINT [ "/usr/bin/catatonit", "--" ]
 CMD ["/entrypoint.sh"]
+
+LABEL org.opencontainers.image.source="https://github.com/plexinc/pms-docker"

@@ -34,10 +34,8 @@ RUN \
     && rm -rf /tmp/*
 
 USER kah
-
 COPY ./apps/qbittorrent/config.py /scripts/config.py
 COPY ./apps/qbittorrent/entrypoint.sh /entrypoint.sh
-
 CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/qbittorrent/qBittorrent"

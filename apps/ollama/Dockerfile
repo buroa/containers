@@ -8,22 +8,17 @@ ARG CHANNEL
 
 WORKDIR /build
 
-RUN \
-    apt-get update \
-    && apt-get install --no-install-recommends -y cmake git
-
-RUN \
-    git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y cmake git \
+    && git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
 
 COPY --from=golang /usr/local/go/ /usr/local/go/
 
-ENV \
-    PATH=/usr/local/go/bin:${PATH} \
-    CMAKE_DEFS="-DLLAMA_CUDA_FORCE_MMQ=off" \
+ENV CMAKE_DEFS="-DLLAMA_CUDA_FORCE_MMQ=off" \
+    PATH="/usr/local/go/bin:${PATH}" \
     OLLAMA_SKIP_CPU_GENERATE=1
 
-RUN \
-    go generate ./... \
+RUN go generate ./... \
     && go build \
         -ldflags \
             "-s -w \
@@ -33,14 +28,14 @@ RUN \
 
 FROM docker.io/library/ubuntu:22.04
 
-ENV OLLAMA_HOST 0.0.0.0
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_VISIBLE_DEVICES=all
+ENV OLLAMA_HOST="0.0.0.0"
 
-USER kah
-WORKDIR /home/kah/.ollama
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64" \
+    NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
+    NVIDIA_VISIBLE_DEVICES="all"
+
+WORKDIR /.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

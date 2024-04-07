@@ -1,4 +1,5 @@
 FROM ghcr.io/buroa/alpine:rolling@sha256:f7d7798d8e6c5c3df13d393c50a3a315147d2101d7f4ee7300fac9f9d244860b
+
 ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
@@ -52,6 +53,7 @@ RUN \
 
 # Install par2cmdline-turbo
 COPY --from=ghcr.io/buroa/par2cmdline-turbo:1.1.1 /usr/local/bin/par2 /usr/local/bin/par2
+
 RUN ln -s /usr/local/bin/par2 /usr/local/bin/par2create \
     && ln -s /usr/local/bin/par2 /usr/local/bin/par2repair \
     && ln -s /usr/local/bin/par2 /usr/local/bin/par2verify

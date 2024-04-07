@@ -1,14 +1,16 @@
-ARG VERSION
 FROM docker.io/library/golang:1.22-alpine as builder
+
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
+
 ENV CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     GOARM=${TARGETVARIANT}
+
 #hadolint ignore=DL3018
 RUN \
     apk add --no-cache upx \
@@ -90,7 +92,7 @@ RUN \
         postgresql-dev \
         unixodbc-dev \
     && \
-    pip install uv \
+    pip install --upgrade pip uv \
     && \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \

@@ -13,6 +13,7 @@ ENV \
 
 #hadolint ignore=DL3018
 RUN apk add --no-cache ca-certificates icu-libs libintl sqlite-libs xmlstarlet
+
 #hadolint ignore=DL3059
 RUN \
     case "${TARGETPLATFORM}" in \
@@ -34,7 +35,6 @@ RUN \
     && rm -rf /tmp/*
 
 USER kah
-
 COPY ./apps/radarr/config.xml.tmpl /app/config.xml.tmpl
 COPY ./apps/radarr/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

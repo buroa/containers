@@ -1,17 +1,22 @@
 ARG VERSION
+
 FROM docker.io/library/alpine:3.19 as builder
+
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
+
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     GOARM=${TARGETVARIANT} \
     GOPATH=/go
+
 ENV PATH $GOPATH/bin:$PATH
+
 #hadolint ignore=DL3018
 RUN \
     apk add --no-cache go upx \
@@ -19,9 +24,11 @@ RUN \
     && upx /go/bin/envsubst
 
 FROM docker.io/library/alpine:${VERSION}
+
 ARG VERSION
 ARG CHANNEL
 ARG TARGETPLATFORM
+
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 
 ENV UMASK="0002" \

@@ -1,24 +1,28 @@
-ARG VERSION
 FROM docker.io/library/alpine:3.19 as builder
+
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
+
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     GOARM=${TARGETVARIANT} \
     GOPATH=/go
+
 ENV PATH $GOPATH/bin:$PATH
+
 #hadolint ignore=DL3018
 RUN \
     apk add --no-cache git go upx \
     && go install -a -ldflags "-X=main.volsyncVersion=v${VERSION}" github.com/backube/volsync@v${VERSION} \
     && upx /go/bin/volsync
 
-FROM docker.io/library/alpine:3.19.1
+FROM docker.io/library/alpine:3.19
+
 ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL

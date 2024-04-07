@@ -8,3 +8,9 @@ channels:
     tests:
       enabled: true
       type: cli
+  - name: "edge"
+    platforms: ["linux/amd64", "linux/arm64"]
+    stable: false
+    tests:
+      enabled: true
+      type: cli
