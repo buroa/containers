@@ -1,4 +1,4 @@
-FROM ghcr.io/buroa/alpine:rolling@sha256:3b88053f744bb11a0b757ecc22f73b2ebf874bb9b2d7bb1f78d60484a69ce0b7
+FROM ghcr.io/buroa/alpine:rolling@sha256:1fab28794e1c6ecd08227f9655ee72670e15d915b8c4aa07b0a90d18797f219e
 
 ARG TARGETPLATFORM
 ARG VERSION
