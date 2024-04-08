@@ -11,12 +11,12 @@ WORKDIR /build
 RUN \
     apt-get -qq update \
     && \
-    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+    apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ccache \
         cmake \
         git \
-    && \
-    git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
 
 COPY --from=golang /usr/local/go/ /usr/local/go/
 
@@ -39,18 +39,11 @@ USER root
 RUN \
     apt-get -qq update \
     && \
-    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+    apt-get -qq install -y --no-install-recommends --no-install-suggests \
         bash \
         ca-certificates \
         catatonit \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && \
-    rm -rf \
-        /tmp/* \
-        /var/lib/apt/lists/* \
-        /var/tmp/
+    && rm -rf /var/lib/apt/lists/*
 
 ENV OLLAMA_HOST="0.0.0.0"
 
