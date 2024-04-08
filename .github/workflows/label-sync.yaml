@@ -5,7 +5,7 @@ name: "Label Sync"
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - .github/labels.yaml
       - .github/workflows/label-sync.yaml
@@ -30,12 +30,11 @@ jobs:
         with:
           token: "${{ steps.app-token.outputs.token }}"
 
-      - name: Setup Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+      - name: Setup Path
+        run: echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
 
       - name: Setup Workflow Tools
-        shell: bash
-        run: brew install go-task
+        run: brew update && brew install go-task
 
       - name: Append app labels to the labels config file
         shell: bash
