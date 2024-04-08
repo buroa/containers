@@ -8,9 +8,15 @@ ARG CHANNEL
 
 WORKDIR /build
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y ccache cmake git \
-    && git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
+RUN \
+    apt-get -qq update \
+    && \
+    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+        ccache \
+        cmake \
+        git \
+    && \
+    git clone --depth 1 --branch v${VERSION} https://github.com/ollama/ollama.git .
 
 COPY --from=golang /usr/local/go/ /usr/local/go/
 
@@ -31,12 +37,18 @@ FROM docker.io/library/ubuntu:24.04
 USER root
 
 RUN \
-    adduser kah \
-        --uid 568 \
-        --group \
-        --system \
-        --disabled-password \
-        --no-create-home
+    apt-get -qq update \
+    && \
+    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+        catatonit \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && \
+    rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/
 
 ENV OLLAMA_HOST="0.0.0.0"
 
@@ -45,10 +57,11 @@ ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
 
-USER kah
-WORKDIR /home/kah/.ollama
+USER 568:568
+WORKDIR /.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/usr/bin/catatonit", "--" ]
 CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/ollama/ollama"
