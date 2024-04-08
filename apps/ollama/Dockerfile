@@ -46,6 +46,7 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 USER root
+WORKDIR /root/.ollama
 
 RUN \
     apt-get -qq update \
@@ -56,7 +57,6 @@ RUN \
         catatonit \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /root/.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/usr/bin/catatonit", "--"]

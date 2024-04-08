@@ -13,11 +13,11 @@ ENV \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-USER root
-WORKDIR /app
-
 ENV UMASK="0002" \
     TZ="Etc/UTC"
+
+USER root
+WORKDIR /app
 
 #hadolint ignore=DL3018,DL3013
 RUN \

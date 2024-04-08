@@ -48,6 +48,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
+USER root
 WORKDIR /app/backend
 
 #hadolint ignore=DL3018,DL3013
