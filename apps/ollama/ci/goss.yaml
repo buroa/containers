@@ -1,6 +1,16 @@
 ---
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#process
+process:
+  ollama:
+    running: true
+
 # https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#port
 port:
   # https://github.com/aelsabbahy/goss/issues/149
-  tcp6:11434:
+  tcp:11434:
     listening: true
+
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#http
+http:
+  http://localhost:8080:
+    status: 200
