@@ -62,7 +62,7 @@ ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 WORKDIR /root/.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
-ENTRYPOINT [ "/usr/bin/catatonit", "--" ]
+ENTRYPOINT ["/usr/bin/catatonit", "--"]
 CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/ollama/ollama"
