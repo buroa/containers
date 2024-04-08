@@ -29,7 +29,6 @@ def load_metadata_file(file_path):
     return None
 
 if __name__ == "__main__":
-    base_images = []
     app_images = []
     for subdir, dirs, files in os.walk("./apps"):
         for file in files:
@@ -48,11 +47,9 @@ if __name__ == "__main__":
                     "html_url": f"https://github.com/{repo_name}/pkgs/container/{name}",
                     "owner": repo_owner
                 }
-                if meta["base"]:
-                    base_images.append(image)
-                else:
-                    app_images.append(image)
+
+                app_images.append(image)
 
     template = env.get_template("README.md.j2")
     with open("./README.md", "w") as f:
-        f.write(template.render(base_images=base_images, app_images=app_images))
+        f.write(template.render(app_images=app_images))

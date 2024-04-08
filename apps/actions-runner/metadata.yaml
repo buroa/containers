@@ -1,10 +1,9 @@
 ---
 app: actions-runner
-base: false
-semantic_versioning: true
+semver: true
 channels:
   - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
+    platforms: ["linux/amd64"]
     stable: true
     tests:
       enabled: true

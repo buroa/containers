@@ -1,5 +1,4 @@
 ARG VERSION
-
 FROM --platform=amd64 ghcr.io/actions/actions-runner:${VERSION}
 
 ENV HOMEBREW_NO_ANALYTICS=1 \
@@ -12,9 +11,9 @@ ENV HOMEBREW_NO_ANALYTICS=1 \
 USER root
 
 RUN \
-    apt-get update && apt-get upgrade -y \
+    apt-get -qq update \
     && \
-    apt-get install -y --no-install-recommends \
+    apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
         curl \
         gcc \
@@ -31,5 +30,3 @@ RUN \
 USER runner
 
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"

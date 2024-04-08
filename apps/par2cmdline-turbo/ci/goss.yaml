@@ -1,0 +1,4 @@
+---
+file:
+  /usr/local/bin/par2:
+    exists: true

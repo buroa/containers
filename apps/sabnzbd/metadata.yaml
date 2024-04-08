@@ -1,7 +1,6 @@
 ---
 app: sabnzbd
-base: false
-semantic_versioning: true
+semver: true
 channels:
   - name: stable
     platforms: ["linux/amd64", "linux/arm64"]

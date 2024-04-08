@@ -1,4 +1,19 @@
-FROM ghcr.io/buroa/alpine:rolling@sha256:1fab28794e1c6ecd08227f9655ee72670e15d915b8c4aa07b0a90d18797f219e
+FROM docker.io/library/golang:1.22-alpine as envsubst
+
+ARG VERSION
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT=""
+ARG TARGETPLATFORM
+
+ENV CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    GOARM=${TARGETVARIANT}
+
+RUN go install -ldflags="-s -w" github.com/drone/envsubst/cmd/envsubst@latest
+
+FROM docker.io/library/alpine:3.19
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -11,11 +26,24 @@ ENV \
     PROWLARR__PORT="9696" \
     PROWLARR__ANALYTICS_ENABLED="False"
 
-#hadolint ignore=DL3018
-RUN apk add --no-cache ca-certificates icu-libs libintl sqlite-libs xmlstarlet
+USER root
+WORKDIR /app
 
-#hadolint ignore=DL3059
+#hadolint ignore=DL3018,DL3059
 RUN \
+    apk add --no-cache \
+        bash \
+        ca-certificates \
+        catatonit \
+        curl \
+        icu-libs \
+        jq \
+        libintl \
+        nano \
+        sqlite-libs \
+        tzdata \
+        xmlstarlet \
+    && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') export ARCH='x64' ;; \
         'linux/arm64') export ARCH='arm64' ;; \
@@ -26,17 +54,17 @@ RUN \
     curl -fsSL "https://prowlarr.servarr.com/v1/update/${PROWLARR__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
     && \
-    rm -rf \
-        /app/bin/Prowlarr.Update \
+    rm -rf /app/bin/Prowlarr.Update \
     && \
     printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[buroa](https://github.com/buroa)\n" "${PROWLARR__BRANCH}" "${VERSION}" > /app/package_info \
     && chown -R root:root /app \
     && chmod -R 755 /app \
     && rm -rf /tmp/*
 
-USER kah
 COPY ./apps/prowlarr/config.xml.tmpl /app/config.xml.tmpl
 COPY ./apps/prowlarr/entrypoint.sh /entrypoint.sh
+COPY --from=envsubst /go/bin/envsubst /usr/local/bin/envsubst
+ENTRYPOINT ["/usr/bin/catatonit", "--"]
 CMD ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/Prowlarr/Prowlarr"

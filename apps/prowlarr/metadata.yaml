@@ -1,7 +1,6 @@
 ---
 app: prowlarr
-base: false
-semantic_versioning: true
+semver: true
 channels:
   - name: master
     platforms: ["linux/amd64", "linux/arm64"]

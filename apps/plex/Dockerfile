@@ -1,19 +1,4 @@
-FROM docker.io/library/golang:1.22 as envsubst
-
-ARG VERSION
-ARG TARGETOS
-ARG TARGETARCH
-ARG TARGETVARIANT=""
-ARG TARGETPLATFORM
-
-ENV CGO_ENABLED=0 \
-    GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH} \
-    GOARM=${TARGETVARIANT}
-
-RUN go install -ldflags="-s -w" github.com/drone/envsubst/cmd/envsubst@latest
-
-FROM docker.io/library/ubuntu:24.04
+FROM docker.io/library/ubuntu:22.04
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -33,25 +18,22 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
+USER root
+WORKDIR /app
+
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get -qq update \
     && \
-    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+    apt-get -qq install -y --no-install-recommends --no-install-suggests \
         bash \
         ca-certificates \
         catatonit \
-        coreutils \
         curl \
-        dnsutils \
-        iputils-ping \
-        jo \
         jq \
-        moreutils \
+        nano \
         tzdata \
-        unzip \
         uuid-runtime \
-        vim-tiny \
         xmlstarlet \
     && \
     case "${TARGETPLATFORM}" in \
@@ -78,10 +60,6 @@ RUN \
         /var/lib/apt/lists/* \
         /var/tmp/
 
-WORKDIR "${PLEX_MEDIA_SERVER_HOME}"
-COPY --from=envsubst /go/bin/envsubst /usr/local/bin/envsubst
 COPY ./apps/plex/entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/usr/bin/catatonit", "--" ]
 CMD ["/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/plexinc/pms-docker"

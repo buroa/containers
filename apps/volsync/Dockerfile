@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.19 as builder
+FROM docker.io/library/golang:1.22-alpine as volsync
 
 ARG VERSION
 ARG TARGETOS
@@ -6,22 +6,14 @@ ARG TARGETARCH
 ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
+ENV CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
-    GOARM=${TARGETVARIANT} \
-    GOPATH=/go
+    GOARM=${TARGETVARIANT}
 
-ENV PATH $GOPATH/bin:$PATH
+RUN go install -a -ldflags "-X=main.volsyncVersion=v${VERSION}" github.com/backube/volsync@v${VERSION}
 
-#hadolint ignore=DL3018
-RUN \
-    apk add --no-cache git go upx \
-    && go install -a -ldflags "-X=main.volsyncVersion=v${VERSION}" github.com/backube/volsync@v${VERSION} \
-    && upx /go/bin/volsync
-
-FROM docker.io/library/alpine:3.19
+FROM docker.io/library/alpine:3.19.1
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -46,9 +38,8 @@ RUN \
     && rm -rf /tmp/*
 
 COPY --from=docker.io/rclone/rclone:1.66.0 /usr/local/bin/rclone /usr/local/bin/rclone
-COPY --from=docker.io/restic/restic:0.16.4 /usr/bin/restic       /usr/local/bin/restic
-COPY --from=builder /go/bin/volsync /manager
-
+COPY --from=docker.io/restic/restic:0.16.4 /usr/bin/restic /usr/local/bin/restic
+COPY --from=volsync /go/bin/volsync /manager
 ENTRYPOINT ["/bin/bash"]
 
 LABEL org.opencontainers.image.source="https://github.com/backube/volsync"

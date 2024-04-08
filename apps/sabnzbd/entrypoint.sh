@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-#shellcheck disable=SC1091
-test -f "/scripts/umask.sh" && source "/scripts/umask.sh"
-test -f "/scripts/vpn.sh" && source "/scripts/vpn.sh"
-
 if [[ ! -f "/config/sabnzbd.ini" ]]; then
     printf "Copying over default configuration ...\n"
     mkdir -p /config/sabnzbd
@@ -22,7 +18,7 @@ fi
 
 #shellcheck disable=SC2086
 exec \
-    /usr/bin/python3 \
+    python \
         /app/SABnzbd.py \
         --browser 0 \
         --server 0.0.0.0:${SABNZBD__PORT:-8080} \

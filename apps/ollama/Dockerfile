@@ -57,8 +57,7 @@ ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
 
-USER 568:568
-WORKDIR /.ollama
+WORKDIR /root/.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/usr/bin/catatonit", "--" ]

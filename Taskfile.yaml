@@ -12,7 +12,7 @@ tasks:
 
   test:
     desc: |-
-      task APP=<app> CHANNEL=<channel> BASE=<true/false> test
+      task APP=<app> CHANNEL=<channel> test
     cmds:
       - task: download-goss
       - >-
@@ -29,7 +29,7 @@ tasks:
         {{end}}
         -f ./apps/{{.APP}}/Dockerfile .
       - >-
-        ./.goss/dgoss run {{.APP}}:{{.CHANNEL}} {{if eq .BASE "true"}}tail -f /dev/null{{end}}
+        ./.goss/dgoss run {{.APP}}:{{.CHANNEL}}
     env:
       CONTAINER_RUNTIME: docker
       GOSS_PATH: ./.goss/goss
