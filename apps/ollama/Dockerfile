@@ -36,9 +36,6 @@ FROM docker.io/library/ubuntu:24.04
 
 ENV OLLAMA_HOST="0.0.0.0"
 
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-    LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64"
-
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
 
