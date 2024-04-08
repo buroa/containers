@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:22.04
+FROM docker.io/library/ubuntu:22.10
 
 ARG TARGETPLATFORM
 ARG VERSION
