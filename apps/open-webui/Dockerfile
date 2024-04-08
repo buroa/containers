@@ -1,4 +1,4 @@
-FROM docker.io/library/node:alpine as build
+FROM docker.io/library/node:21-alpine3.19 as build
 
 ARG VERSION
 
@@ -8,27 +8,25 @@ RUN \
     apk add --no-cache \
         curl \
     && \
-    curl -fsSL "https://chroma-onnx-models.s3.amazonaws.com/all-MiniLM-L6-v2/onnx.tar.gz" \
-        | tar xzf - -C /app \
-    && \
     curl -fsSL "https://github.com/open-webui/open-webui/archive/refs/tags/v${VERSION}.tar.gz" \
         | tar xzf - -C /app --strip-components 1 \
     && npm ci \
     && npm run build
 
-FROM docker.io/library/python:3.11-bookworm
+FROM docker.io/library/python:3.11-slim-bookworm
 
 ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
 ENV ENV=prod \
-    PORT="" \
-    OLLAMA_BASE_URL="/ollama" \
-    OPENAI_API_BASE_URL="" \
-    OPENAI_API_KEY="" \
+    PORT=8080
+
+ENV OLLAMA_BASE_URL="/ollama" \
+    OPENAI_API_BASE_URL=""
+
+ENV OPENAI_API_KEY="" \
     WEBUI_SECRET_KEY="" \
-    WEBUI_AUTH_TRUSTED_EMAIL_HEADER="" \
     SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true
 
@@ -40,7 +38,7 @@ ENV WHISPER_MODEL="base" \
 ENV RAG_EMBEDDING_MODEL="all-MiniLM-L6-v2" \
     RAG_EMBEDDING_MODEL_DEVICE_TYPE="cpu" \
     RAG_EMBEDDING_MODEL_DIR="/app/backend/data/cache/embedding/models" \
-    SENTENCE_TRANSFORMERS_HOME=$RAG_EMBEDDING_MODEL_DIR
+    SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
 
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
@@ -66,12 +64,16 @@ RUN \
     pip install uv \
     && \
     uv pip install --system \
-        --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
-    && \
-    uv pip install --system \
         torch \
         torchvision \
         torchaudio \
+    && \
+    uv pip install --system \
+        --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
+    && \
+    python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" \
+    && \
+    python -c "import os; from chromadb.utils import embedding_functions; sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name=os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" \
     && \
     mkdir -p /app \
     && chown -R root:root /app \
@@ -85,12 +87,10 @@ RUN \
         /var/lib/apt/lists/* \
         /var/tmp/
 
-COPY --from=build /app/backend /app/backend
-COPY --from=build /app/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
 COPY --from=build /app/build /app/build
 COPY --from=build /app/CHANGELOG.md /app/CHANGELOG.md
 COPY --from=build /app/package.json /app/package.json
-
+COPY --from=build /app/backend /app/backend
 COPY ./apps/open-webui/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/usr/bin/catatonit", "--"]
 CMD ["/entrypoint.sh"]
