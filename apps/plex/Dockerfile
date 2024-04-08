@@ -35,6 +35,14 @@ ENV UMASK="0002" \
 
 USER root
 
+RUN \
+    adduser kah \
+        --uid 568 \
+        --group \
+        --system \
+        --disabled-password \
+        --no-create-home
+
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get -qq update \
@@ -80,8 +88,8 @@ RUN \
         /var/lib/apt/lists/* \
         /var/tmp/
 
+USER kah
 WORKDIR "${PLEX_MEDIA_SERVER_HOME}"
-
 COPY --from=envsubst /go/bin/envsubst /usr/local/bin/envsubst
 COPY ./apps/plex/entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/usr/bin/catatonit", "--" ]

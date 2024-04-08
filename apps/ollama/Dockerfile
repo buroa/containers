@@ -28,6 +28,16 @@ RUN go generate ./... \
 
 FROM docker.io/library/ubuntu:24.04
 
+USER root
+
+RUN \
+    adduser kah \
+        --uid 568 \
+        --group \
+        --system \
+        --disabled-password \
+        --no-create-home
+
 ENV OLLAMA_HOST="0.0.0.0"
 
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
@@ -35,7 +45,8 @@ ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
 
-WORKDIR /.ollama
+USER kah
+WORKDIR /home/kah/.ollama
 COPY --from=builder /build/bin/ollama /usr/local/bin/ollama
 COPY ./apps/ollama/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
