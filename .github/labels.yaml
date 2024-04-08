@@ -1,0 +1,11 @@
+---
+- name: renovate/container
+  color: "027fa0"
+- name: type/patch
+  color: "ffeC19"
+- name: type/minor
+  color: "ff9800"
+- name: type/major
+  color: "f6412d"
+- name: hold
+  color: "ee0701"

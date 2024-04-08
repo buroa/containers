@@ -45,6 +45,9 @@ ENV RAG_EMBEDDING_MODEL="all-MiniLM-L6-v2" \
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 WORKDIR /app/backend
 
 #hadolint ignore=DL3018,DL3013

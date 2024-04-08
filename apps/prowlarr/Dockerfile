@@ -26,6 +26,9 @@ ENV \
     PROWLARR__PORT="9696" \
     PROWLARR__ANALYTICS_ENABLED="False"
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 USER root
 WORKDIR /app
 

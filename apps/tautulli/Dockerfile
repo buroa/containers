@@ -15,6 +15,9 @@ ENV \
 
 ENV TAUTULLI_DOCKER="True"
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 USER root
 WORKDIR /app
 

@@ -16,6 +16,9 @@ ENV \
 USER root
 WORKDIR /app
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 #hadolint ignore=DL3018,DL3013
 RUN \
     apk add --no-cache \

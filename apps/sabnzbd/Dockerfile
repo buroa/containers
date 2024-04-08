@@ -15,6 +15,9 @@ ENV \
 
 ENV SABNZBD__PORT=8080
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 USER root
 WORKDIR /app
 
