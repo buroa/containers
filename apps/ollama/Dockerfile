@@ -40,6 +40,8 @@ RUN \
     apt-get -qq update \
     && \
     apt-get -qq install --no-install-recommends --no-install-suggests -y \
+        bash \
+        ca-certificates \
         catatonit \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
