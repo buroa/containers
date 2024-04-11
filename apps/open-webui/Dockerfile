@@ -8,7 +8,7 @@ RUN \
     apk add --no-cache \
         curl \
     && \
-    curl -fsSL "https://github.com/buroa/open-webui/archive/refs/tags/v${VERSION}.tar.gz" \
+    curl -fsSL "https://github.com/open-webui/open-webui/archive/refs/tags/v${VERSION}.tar.gz" \
         | tar xzf - -C /app --strip-components 1 \
     && npm ci \
     && npm run build
@@ -69,7 +69,7 @@ RUN \
         torchaudio \
     && \
     uv pip install --system \
-        --requirement "https://raw.githubusercontent.com/buroa/open-webui/v${VERSION}/backend/requirements.txt" \
+        --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
     && \
     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" \
     && \
