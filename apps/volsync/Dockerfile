@@ -25,6 +25,7 @@ RUN \
         bash \
         ca-certificates \
         curl \
+        coreutils \
         tzdata \
     && \
     curl -fsSL "https://github.com/backube/volsync/archive/refs/tags/v${VERSION}.tar.gz" \
