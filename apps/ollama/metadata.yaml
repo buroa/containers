@@ -8,9 +8,10 @@ channels:
     tests:
       enabled: true
       type: web
-  - name: beta
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
+  # TODO: beta not working yet
+  # - name: beta
+  #   platforms: ["linux/amd64", "linux/arm64"]
+  #   stable: false
+  #   tests:
+  #     enabled: true
+  #     type: web
