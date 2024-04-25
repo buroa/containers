@@ -45,8 +45,6 @@ COPY --from=docker.io/library/golang:1.22.2-bookworm /usr/local/go/ /usr/local/g
 ENV CGO_ENABLED="1" \
     PATH="/usr/local/go/bin:${PATH}"
 
-RUN ls -la llm/build/linux/arm64_static
-
 RUN go build -ldflags "-s -w \
         -X github.com/ollama/ollama/version.Version=${VERSION} \
         -X github.com/ollama/ollama/server.mode=release" \
