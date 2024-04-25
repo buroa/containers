@@ -35,8 +35,8 @@ ENV LITELLM_LOCAL_MODEL_COST_MAP="True"
 ENV WHISPER_MODEL="base" \
     WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
 
-ENV RAG_EMBEDDING_MODEL="Alibaba-NLP/gte-large-en-v1.5" \
-    RAG_RERANKING_MODEL="BAAI/bge-reranker-large" \
+ENV RAG_EMBEDDING_MODEL="sentence-transformers/all-MiniLM-L6-v2" \
+    RAG_RERANKING_MODEL="" \
     SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
 
 ENV HF_HOME="/app/backend/data/cache/embedding/models"
@@ -73,8 +73,6 @@ RUN \
         --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
     && \
     python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" \
-    && \
-    python -c "import os; from sentence_transformers import CrossEncoder; CrossEncoder(os.environ['RAG_RERANKING_MODEL'], device='cpu')" \
     && \
     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" \
     && \
