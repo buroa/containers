@@ -8,7 +8,7 @@ RUN \
     apk add --no-cache \
         curl \
     && \
-    curl -fsSL "https://github.com/buroa/open-webui/archive/refs/tags/v${VERSION}.tar.gz" \
+    curl -fsSL "https://github.com/open-webui/open-webui/archive/refs/tags/v${VERSION}.tar.gz" \
         | tar xzf - -C /app --strip-components 1 \
     && npm ci \
     && npm run build
@@ -35,10 +35,11 @@ ENV LITELLM_LOCAL_MODEL_COST_MAP="True"
 ENV WHISPER_MODEL="base" \
     WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
 
-ENV RAG_EMBEDDING_MODEL="all-MiniLM-L6-v2" \
-    RAG_EMBEDDING_MODEL_DEVICE_TYPE="cpu" \
-    RAG_EMBEDDING_MODEL_DIR="/app/backend/data/cache/embedding/models" \
+ENV RAG_EMBEDDING_MODEL="Alibaba-NLP/gte-large-en-v1.5" \
+    RAG_RERANKING_MODEL="BAAI/bge-reranker-large" \
     SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
+
+ENV HF_HOME="/app/backend/data/cache/embedding/models"
 
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
     NVIDIA_VISIBLE_DEVICES="all"
@@ -69,7 +70,11 @@ RUN \
         torchaudio \
     && \
     uv pip install --system \
-        --requirement "https://raw.githubusercontent.com/buroa/open-webui/v${VERSION}/backend/requirements.txt" \
+        --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
+    && \
+    python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" \
+    && \
+    python -c "import os; from sentence_transformers import CrossEncoder; CrossEncoder(os.environ['RAG_RERANKING_MODEL'], device='cpu')" \
     && \
     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" \
     && \
