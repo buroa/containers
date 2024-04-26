@@ -41,7 +41,7 @@ RUN \
     && \
     pip install uv \
     && \
-    uv pip install --system \
+    uv pip install --system --no-cache-dir \
         --requirement "https://raw.githubusercontent.com/Tautulli/tautulli-baseimage/python3/requirements.txt" \
     && \
     mkdir -p /app \

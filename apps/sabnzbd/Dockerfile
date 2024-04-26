@@ -46,7 +46,7 @@ RUN \
     && \
     pip install uv \
     && \
-    uv pip install --system --requirement /app/requirements.txt \
+    uv pip install --system --no-cache-dir --requirement /app/requirements.txt \
     && \
     chown -R root:root /app \
     && chmod -R 755 /app \
