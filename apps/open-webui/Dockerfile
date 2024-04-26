@@ -64,17 +64,13 @@ RUN \
     && \
     pip install uv \
     && \
-    uv pip install --system \
+    uv pip install --system --no-cache-dir \
         torch \
         torchvision \
         torchaudio \
     && \
-    uv pip install --system \
+    uv pip install --system --no-cache-dir \
         --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
-    && \
-    python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" \
-    && \
-    python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" \
     && \
     mkdir -p /app \
     && chown -R root:root /app \
@@ -87,6 +83,9 @@ RUN \
         /tmp/* \
         /var/lib/apt/lists/* \
         /var/tmp/
+
+COPY ./apps/open-webui/scripts/models.py /models.py
+RUN /models.py
 
 COPY --from=build /app/build /app/build
 COPY --from=build /app/CHANGELOG.md /app/CHANGELOG.md
