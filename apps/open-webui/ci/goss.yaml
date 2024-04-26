@@ -1,9 +1,4 @@
 ---
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#process
-process:
-  python:
-    running: true
-
 # https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#port
 port:
   # https://github.com/aelsabbahy/goss/issues/149
