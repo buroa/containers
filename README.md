@@ -71,6 +71,7 @@ Container | Channel | Image
 [bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [ollama](https://github.com/buroa/containers/pkgs/container/ollama) | main | ghcr.io/buroa/ollama
+[ollama-beta](https://github.com/buroa/containers/pkgs/container/ollama-beta) | beta | ghcr.io/buroa/ollama-beta
 [open-webui](https://github.com/buroa/containers/pkgs/container/open-webui) | main | ghcr.io/buroa/open-webui
 [par2cmdline-turbo](https://github.com/buroa/containers/pkgs/container/par2cmdline-turbo) | stable | ghcr.io/buroa/par2cmdline-turbo
 [plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
