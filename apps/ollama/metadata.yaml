@@ -8,10 +8,9 @@ channels:
     tests:
       enabled: true
       type: web
-  # There is no pre-release published currently
-  # - name: beta
-  #   platforms: ["linux/amd64", "linux/arm64"]
-  #   stable: false
-  #   tests:
-  #     enabled: true
-  #    type: web
+  - name: beta
+    platforms: ["linux/amd64", "linux/arm64"]
+    stable: false
+    tests:
+      enabled: true
+      type: web
