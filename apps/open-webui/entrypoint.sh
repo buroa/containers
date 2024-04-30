@@ -22,6 +22,7 @@ if [[ -z "$LD_LIBRARY_PATH" ]]; then
 fi
 
 cd /app/backend
+
 exec \
     uvicorn main:app \
         --host 0.0.0.0 \

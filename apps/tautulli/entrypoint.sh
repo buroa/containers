@@ -2,7 +2,7 @@
 
 #shellcheck disable=SC2086
 exec \
-    python \
+    /usr/local/bin/python \
         /app/Tautulli.py \
         --nolaunch \
         --config /config/config.ini \

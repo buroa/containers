@@ -1,5 +1,5 @@
 ---
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#file
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 file:
   /manager:
     exists: true

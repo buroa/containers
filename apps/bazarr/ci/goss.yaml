@@ -1,16 +1,16 @@
 ---
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#process
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
   python3:
     running: true
-
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#port
 port:
-  # https://github.com/aelsabbahy/goss/issues/149
   tcp:6767:
     listening: true
-
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#http
 http:
   http://localhost:6767:
     status: 200
+file:
+  /usr/bin/python3:
+    exists: true
+  /usr/bin/unrar:
+    exists: true

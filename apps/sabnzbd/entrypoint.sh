@@ -18,7 +18,7 @@ fi
 
 #shellcheck disable=SC2086
 exec \
-    python \
+    /usr/local/bin/pytho \
         /app/SABnzbd.py \
         --browser 0 \
         --server 0.0.0.0:${SABNZBD__PORT:-8080} \

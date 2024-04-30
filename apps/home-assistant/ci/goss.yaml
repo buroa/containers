@@ -1,16 +1,14 @@
 ---
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#process
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
   hass:
     running: true
-
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#port
+file:
+  /usr/local/bin/hass:
+    exists: true
 port:
-  # https://github.com/aelsabbahy/goss/issues/149
   tcp6:8123:
     listening: true
-
-# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#http
 http:
   http://localhost:8123:
     status: 200
