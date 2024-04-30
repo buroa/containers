@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p /config
+
 #shellcheck disable=SC2086
 exec \
     /usr/bin/python3 \

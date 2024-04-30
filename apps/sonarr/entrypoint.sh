@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p /config
+
 # Discover existing configuration settings for backwards compatibility
 if [[ -f /config/config.xml ]]; then
     current_log_level="$(xmlstarlet sel -t -v "//LogLevel" -nl /config/config.xml)"
