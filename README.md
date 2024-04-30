@@ -42,6 +42,47 @@ We do take a similar approach but instead of appending a `-ls69` or `-r420` pref
 
 _If pinning an image to the sha256 digest, tools like [Renovate](https://github.com/renovatebot/renovate) support updating the container on a digest or application version change._
 
+## Rootless
+
+To run these containers as non-root make sure you update your configuration to the user and group you want.
+
+### Docker compose
+
+```yaml
+networks:
+  sonarr:
+    name: sonarr
+    external: true
+services:
+  sonarr:
+    image: ghcr.io/buroa/sonarr:3.0.8.1507
+    container_name: sonarr
+    user: 65534:65534
+    # ...
+```
+
+### Kubernetes
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+# ...
+spec:
+  # ...
+  template:
+    # ...
+    spec:
+      # ...
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+# ...
+```
+
 ## Passing arguments to a application
 
 Some applications do not support defining configuration via environment variables and instead only allow certain config to be set in the command line arguments for the app. To circumvent this, for applications that have an `entrypoint.sh` read below.
@@ -92,31 +133,6 @@ Container | Channel | Image
 [volsync](https://github.com/buroa/containers/pkgs/container/volsync) | stable | ghcr.io/buroa/volsync
 
 
-## Contributing
-
-1. Install [Docker](https://docs.docker.com/get-docker/), [Taskfile](https://taskfile.dev/) & [Cuelang](https://cuelang.org/)
-2. Get familiar with the structure of the repositroy
-3. Find a similar application in the apps directory
-4. Copy & Paste an application and update the directory name
-5. Update `metadata.json`, `Dockerfile`, `ci/latest.sh`, `ci/goss.yaml` and make it suit the application build
-6. Include any additional files if required
-7. Use Taskfile to build and test your image
-
-    ```ruby
-    task APP=sonarr CHANNEL=main test
-    ```
-
-### Automated tags
-
-Here's an example of how tags are created in the GitHub workflows, be careful with `metadata.json` as it does affect the outcome of how the tags will be created when the application is built.
-
-| Application | Channel   | Stable  | Generated Tag               |
-|-------------|-----------|---------|-----------------------------|
-| `sonarr`    | `develop` | `false` | `sonarr-develop:3.0.8.1538` |
-| `sonarr`    | `develop` | `false` | `sonarr-develop:rolling`    |
-| `sonarr`    | `main`    | `true`  | `sonarr:3.0.8.1507`         |
-| `sonarr`    | `main`    | `true`  | `sonarr:rolling`            |
-
 ## Deprecations
 
 Containers here can be **deprecated** at any point, this could be for any reason described below.
@@ -127,6 +143,7 @@ Containers here can be **deprecated** at any point, this could be for any reason
 4. The **maintenance burden** of keeping the container here **is too bothersome**
 
 **Note**: Deprecated containers will remained published to this repo for 6 months after which they will be pruned.
+
 ## Credits
 
 A lot of inspiration and ideas are thanks to the hard work of [hotio.dev](https://hotio.dev/) and [linuxserver.io](https://www.linuxserver.io/) contributors.
