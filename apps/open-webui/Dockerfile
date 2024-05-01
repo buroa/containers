@@ -1,4 +1,4 @@
-FROM docker.io/library/node:21-alpine3.19 as build
+FROM docker.io/library/node:21-alpine3.19 as frontend
 
 ARG VERSION
 
@@ -13,7 +13,7 @@ RUN \
     && npm ci \
     && npm run build
 
-FROM docker.io/library/python:3.11-slim-bookworm
+FROM docker.io/library/python:3.12-slim-bookworm
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -57,19 +57,21 @@ RUN \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         catatonit \
         ffmpeg \
+        g++ \
         libsm6 \
         libxext6 \
         netcat-openbsd \
         pandoc \
+        sqlite3 \
     && \
     pip install uv \
     && \
-    uv pip install --system --no-cache-dir \
+    uv pip install --system --no-cache-dir --compile-bytecode \
         torch \
         torchvision \
         torchaudio \
     && \
-    uv pip install --system --no-cache-dir \
+    uv pip install --system --no-cache-dir --compile-bytecode \
         --requirement "https://raw.githubusercontent.com/open-webui/open-webui/v${VERSION}/backend/requirements.txt" \
     && \
     mkdir -p /app \
@@ -87,10 +89,10 @@ RUN \
 COPY ./apps/open-webui/scripts/models.py /models.py
 RUN /models.py
 
-COPY --from=build /app/build /app/build
-COPY --from=build /app/CHANGELOG.md /app/CHANGELOG.md
-COPY --from=build /app/package.json /app/package.json
-COPY --from=build /app/backend /app/backend
+COPY --from=frontend /app/build /app/build
+COPY --from=frontend /app/CHANGELOG.md /app/CHANGELOG.md
+COPY --from=frontend /app/package.json /app/package.json
+COPY --from=frontend /app/backend /app/backend
 COPY ./apps/open-webui/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/usr/bin/catatonit", "--"]
 CMD ["/entrypoint.sh"]
