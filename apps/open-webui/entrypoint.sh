@@ -16,8 +16,8 @@ if [[ -z "$WEBUI_SECRET_KEY" ]]; then
 fi
 
 if [[ -z "$LD_LIBRARY_PATH" ]]; then
-    export LD_LIBRARY_PATH="/usr/local/lib/python3.11/site-packages/torch/lib"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
+    export LD_LIBRARY_PATH="/usr/local/lib/python3.12/site-packages/torch/lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.12/site-packages/nvidia/cudnn/lib"
     echo "Setting LD_LIBRARY_PATH to $LD_LIBRARY_PATH"
 fi
 
