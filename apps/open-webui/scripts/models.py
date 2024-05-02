@@ -15,8 +15,8 @@ def load_model(env: str, clazz, **kwargs):
 
 
 if __name__ == "__main__":
-    load_model("RAG_EMBEDDING_MODEL", SentenceTransformer)
-    load_model("RAG_RERANKING_MODEL", CrossEncoder)
+    load_model("RAG_EMBEDDING_MODEL", SentenceTransformer, trust_remote_code=True)
+    load_model("RAG_RERANKING_MODEL", CrossEncoder, trust_remote_code=True)
     load_model(
         "WHISPER_MODEL",
         WhisperModel,

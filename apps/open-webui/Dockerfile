@@ -19,36 +19,12 @@ ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
-ENV ENV=prod \
-    PORT=8080
-
-ENV OLLAMA_BASE_URL="/ollama" \
-    OPENAI_API_BASE_URL=""
-
-ENV OPENAI_API_KEY="" \
-    WEBUI_SECRET_KEY="" \
-    SCARF_NO_ANALYTICS=true \
-    DO_NOT_TRACK=true
-
-ENV LITELLM_LOCAL_MODEL_COST_MAP="True"
-
-ENV WHISPER_MODEL="base" \
-    WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
-
-ENV RAG_EMBEDDING_MODEL="sentence-transformers/all-MiniLM-L6-v2" \
-    RAG_RERANKING_MODEL="" \
-    SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
-
-ENV HF_HOME="/app/backend/data/cache/embedding/models"
-
-ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
-    NVIDIA_VISIBLE_DEVICES="all"
+ARG TORCH_LIB="/usr/local/lib/python3.12/site-packages/torch/lib" \
+    CUDNN_LIB="/usr/local/lib/python3.12/site-packages/nvidia/cudnn/lib" \
+    CUBLAS_LIB="/usr/local/lib/python3.12/site-packages/nvidia/cublas/lib"
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
-
-USER root
-WORKDIR /app/backend
 
 #hadolint ignore=DL3018,DL3013
 RUN \
@@ -85,6 +61,26 @@ RUN \
         /tmp/* \
         /var/lib/apt/lists/* \
         /var/tmp/
+
+ENV DO_NOT_TRACK="true" \
+    ENV="prod" \
+    HF_HOME="/app/backend/data/cache/embedding/models" \
+    LITELLM_LOCAL_MODEL_COST_MAP="True" \
+    OPENAI_API_BASE_URL="" \
+    OPENAI_API_KEY="" \
+    OLLAMA_BASE_URL="/ollama" \
+    RAG_EMBEDDING_MODEL="BAAI/bge-m3" \
+    RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE="true" \
+    SCARF_NO_ANALYTICS="true" \
+    SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models" \
+    TRANSFORMERS_CACHE="/app/backend/data/cache/embedding/models" \
+    WHISPER_MODEL="base" \
+    WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
+
+ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility" \
+    NVIDIA_VISIBLE_DEVICES="all"
+
+ENV LD_LIBRARY_PATH="${TORCH_LIB}:${CUDNN_LIB}:${CUBLAS_LIB}:${LD_LIBRARY_PATH}"
 
 COPY ./apps/open-webui/scripts/models.py /models.py
 RUN /models.py
