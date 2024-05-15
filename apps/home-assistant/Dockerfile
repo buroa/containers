@@ -91,6 +91,9 @@ RUN \
     uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         homeassistant=="${VERSION}" \
     && \
+    mkdir -p /config \
+    && chown nobody:nogroup -R /config \
+    && \
     apk del --purge .build-deps \
     && \
     rm -rf \
@@ -99,6 +102,11 @@ RUN \
         /tmp/*
 
 COPY ./apps/home-assistant/entrypoint.sh /entrypoint.sh
+
+USER nobody:nogroup
+WORKDIR /config
+VOLUME ["/config"]
+
 ENTRYPOINT ["/usr/bin/catatonit", "--"]
 CMD ["/entrypoint.sh"]
 
