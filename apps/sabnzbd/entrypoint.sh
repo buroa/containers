@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-mkdir -p /config
-
 if [[ ! -f "/config/sabnzbd.ini" ]]; then
     printf "Copying over default configuration ...\n"
     mkdir -p /config/sabnzbd
