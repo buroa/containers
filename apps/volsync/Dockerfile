@@ -13,7 +13,7 @@ ENV CGO_ENABLED=0 \
 
 RUN go install -a -ldflags "-X=main.volsyncVersion=v${VERSION}" github.com/backube/volsync@v${VERSION}
 
-FROM docker.io/library/alpine:3.19.1
+FROM docker.io/library/alpine:3.20.0
 
 ARG TARGETPLATFORM
 ARG VERSION
