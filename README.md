@@ -129,7 +129,6 @@ Container | Channel | Image
 [sonarr](https://github.com/buroa/containers/pkgs/container/sonarr) | main | ghcr.io/buroa/sonarr
 [sonarr-develop](https://github.com/buroa/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/buroa/sonarr-develop
 [tautulli](https://github.com/buroa/containers/pkgs/container/tautulli) | master | ghcr.io/buroa/tautulli
-[volsync](https://github.com/buroa/containers/pkgs/container/volsync) | stable | ghcr.io/buroa/volsync
 
 
 ## Deprecations
