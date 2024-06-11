@@ -13,7 +13,7 @@ RUN \
     && npm ci \
     && npm run build
 
-FROM docker.io/library/python:3.12-slim-bookworm
+FROM docker.io/library/python:3.11-slim-bookworm
 
 ARG TARGETPLATFORM
 ARG VERSION
