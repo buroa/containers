@@ -10,6 +10,3 @@ http:
   http://localhost:9696:
     status: 200
     timeout: 5000
-file:
-  /usr/local/bin/envsubst:
-    exists: true
