@@ -56,12 +56,12 @@ for dbname in ${INIT_POSTGRES_DBNAME}; do
         printf "\e[1;32m%-6s\e[m\n" "Create Database ${dbname} ..."
         createdb --owner "${INIT_POSTGRES_USER}" "${dbname}"
         database_init_file="/initdb/${dbname}.sql"
-        if [[ -f "$(database_init_file)" ]]; then
+        if [[ -f "${database_init_file}" ]]; then
             printf "\e[1;32m%-6s\e[m\n" "Initialize Database ..."
             psql \
                 --dbname "${dbname}" \
                 --echo-all \
-                --file "$(database_init_file)"
+                --file "${database_init_file}"
         fi
     fi
     printf "\e[1;32m%-6s\e[m\n" "Update User Privileges on Database ..."
