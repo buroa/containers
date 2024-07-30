@@ -7,9 +7,9 @@ import json
 import yaml
 import requests
 
-from subprocess import check_output
-
 from os.path import isfile
+from subprocess import check_output
+from packaging.version import Version
 
 repo_owner = os.environ.get('REPO_OWNER', os.environ.get('GITHUB_REPOSITORY_OWNER'))
 
@@ -63,8 +63,7 @@ def get_published_version(image_name):
         tags = image["metadata"]["container"]["tags"]
         if "rolling" in tags:
             tags.remove("rolling")
-            # Assume the longest string is the complete version number
-            return max(tags, key=len)
+            return max(tags, key=lambda v: (Version(v), len(v)))
 
 def get_image_metadata(subdir, meta, forRelease=False, force=False, channels=None):
     imagesToBuild = {
