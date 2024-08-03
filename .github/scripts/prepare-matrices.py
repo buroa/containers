@@ -63,7 +63,7 @@ def get_published_version(image_name):
         tags = image["metadata"]["container"]["tags"]
         if "rolling" in tags:
             tags.remove("rolling")
-            return max(tags, key=lambda v: (Version(v), len(v)))
+            return max(tags, key=len)
 
 def get_image_metadata(subdir, meta, forRelease=False, force=False, channels=None):
     imagesToBuild = {
