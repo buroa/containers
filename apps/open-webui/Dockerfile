@@ -19,9 +19,9 @@ ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
-ARG TORCH_LIB="/usr/local/lib/python3.12/site-packages/torch/lib" \
-    CUDNN_LIB="/usr/local/lib/python3.12/site-packages/nvidia/cudnn/lib" \
-    CUBLAS_LIB="/usr/local/lib/python3.12/site-packages/nvidia/cublas/lib"
+ARG TORCH_LIB="/usr/local/lib/python3.11/site-packages/torch/lib" \
+    CUDNN_LIB="/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib" \
+    CUBLAS_LIB="/usr/local/lib/python3.11/site-packages/nvidia/cublas/lib"
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
