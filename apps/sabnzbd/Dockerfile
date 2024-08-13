@@ -62,7 +62,7 @@ COPY --from=ghcr.io/buroa/par2cmdline-turbo:1.1.1 /usr/local/bin/par2 /usr/local
 RUN ln -s /usr/local/bin/par2 /usr/local/bin/par2create \
     && ln -s /usr/local/bin/par2 /usr/local/bin/par2repair \
     && ln -s /usr/local/bin/par2 /usr/local/bin/par2verify
-COPY --from=ghcr.io/linuxserver/unrar:7.0.7 /usr/bin/unrar-alpine /usr/bin/unrar
+COPY --from=ghcr.io/linuxserver/unrar:7.0.9 /usr/bin/unrar-alpine /usr/bin/unrar
 
 USER nobody:nogroup
 WORKDIR /config
