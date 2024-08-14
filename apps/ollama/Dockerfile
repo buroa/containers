@@ -1,4 +1,4 @@
-FROM docker.io/nvidia/cuda:12.5.1-devel-ubuntu22.04 as builder
+FROM docker.io/nvidia/cuda:12.6.0-devel-ubuntu22.04 as builder
 
 ARG TARGETPLATFORM
 ARG VERSION
