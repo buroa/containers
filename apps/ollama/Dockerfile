@@ -40,7 +40,7 @@ COPY --from=builder-cpu /build/llm/build/linux llm/build/linux
 COPY --from=builder-cuda /build/llm/build/linux llm/build/linux
 COPY --from=builder-static /build/llm/build/linux llm/build/linux
 
-COPY --from=docker.io/library/golang:1.22.4-bookworm /usr/local/go/ /usr/local/go/
+COPY --from=docker.io/library/golang:1.23.0-bookworm /usr/local/go/ /usr/local/go/
 
 ENV CGO_ENABLED="1" \
     PATH="/usr/local/go/bin:${PATH}"
