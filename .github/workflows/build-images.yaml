@@ -87,7 +87,7 @@ jobs:
   build-platform-images:
     name: Build/Test ${{ matrix.image.name }} (${{ matrix.image.platform }})
     needs: prepare
-    runs-on: buildjet-8vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     if: ${{ toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '' }}
     strategy:
       fail-fast: false
