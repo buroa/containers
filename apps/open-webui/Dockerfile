@@ -1,4 +1,4 @@
-FROM docker.io/library/node:22-alpine3.19 as frontend
+FROM docker.io/library/node:21-alpine3.19 as frontend
 
 ARG VERSION
 
