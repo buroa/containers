@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.20-alpine AS build-env
+FROM docker.io/library/golang:1.23-alpine AS build-env
 
 ARG TARGETPLATFORM
 ARG VERSION
