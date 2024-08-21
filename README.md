@@ -111,9 +111,6 @@ Container | Channel | Image
 [actions-runner](https://github.com/buroa/containers/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
-[ollama](https://github.com/buroa/containers/pkgs/container/ollama) | main | ghcr.io/buroa/ollama
-[ollama-beta](https://github.com/buroa/containers/pkgs/container/ollama-beta) | beta | ghcr.io/buroa/ollama-beta
-[open-webui](https://github.com/buroa/containers/pkgs/container/open-webui) | main | ghcr.io/buroa/open-webui
 [par2cmdline-turbo](https://github.com/buroa/containers/pkgs/container/par2cmdline-turbo) | stable | ghcr.io/buroa/par2cmdline-turbo
 [plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
 [plex-beta](https://github.com/buroa/containers/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
