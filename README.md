@@ -109,6 +109,7 @@ Each Image will be built with a `rolling` tag, along with tags specific to it's 
 Container | Channel | Image
 --- | --- | ---
 [actions-runner](https://github.com/buroa/containers/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
+[bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
 [par2cmdline-turbo](https://github.com/buroa/containers/pkgs/container/par2cmdline-turbo) | stable | ghcr.io/buroa/par2cmdline-turbo
