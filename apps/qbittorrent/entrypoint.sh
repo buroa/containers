@@ -40,6 +40,11 @@ if [[ ! -f "$qbtLogFile" ]]; then
     ln -sf /proc/self/fd/1 "$qbtLogFile"
 fi
 
+# Start port-forwarding script in background
+if [[ -n "$GLUETUN_PORT_FORWARDING" ]]; then
+    exec /scripts/port-forward.py &
+fi
+
 #shellcheck disable=SC2086,SC2090
 exec \
     /app/qbittorrent-nox \
