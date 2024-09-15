@@ -25,7 +25,6 @@ RUN \
         nano \
         p7zip \
         python3 \
-        py3-requests \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \
@@ -51,7 +50,6 @@ RUN \
     && rm -rf /tmp/*
 
 COPY ./apps/qbittorrent/scripts/config.py /scripts/config.py
-COPY ./apps/qbittorrent/scripts/port-forward.py /scripts/port-forward.py
 COPY ./apps/qbittorrent/entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
