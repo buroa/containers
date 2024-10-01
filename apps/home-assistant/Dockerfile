@@ -97,6 +97,8 @@ RUN \
     mkdir -p /config \
     && chown nobody:nogroup -R /config \
     && \
+    pip uninstall --yes uv \
+    && \
     apk del --purge .build-deps \
     && \
     rm -rf \
