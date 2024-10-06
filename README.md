@@ -112,7 +112,6 @@ Container | Channel | Image
 [bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
-[par2cmdline-turbo](https://github.com/buroa/containers/pkgs/container/par2cmdline-turbo) | stable | ghcr.io/buroa/par2cmdline-turbo
 [plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
 [plex-beta](https://github.com/buroa/containers/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
 [postgres-init](https://github.com/buroa/containers/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
