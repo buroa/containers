@@ -15,16 +15,10 @@ RUN \
     && \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
-        curl \
         gcc \
-        git \
         jo \
-        jq \
         moreutils \
-        unrar \
-        unzip \
         wget \
-        zip \
     && rm -rf /var/lib/apt/lists/*
 
 USER runner
