@@ -1,16 +1,15 @@
-ARG VERSION
 FROM docker.io/library/alpine:3.20
 
 ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 ENV \
     COMPlus_EnableDiagnostics="0" \
     RADARR__UPDATE__BRANCH="${CHANNEL}"
-
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
 
 USER root
 WORKDIR /app
@@ -21,30 +20,27 @@ RUN \
         bash \
         ca-certificates \
         catatonit \
+        coreutils \
         curl \
         icu-libs \
+        jo \
         jq \
         libintl \
         nano \
         sqlite-libs \
+        trurl \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') export ARCH='x64' ;; \
         'linux/arm64') export ARCH='arm64' ;; \
     esac \
-    && \
-    mkdir -p /app/bin \
-    && \
-    curl -fsSL "https://radarr.servarr.com/v1/update/${RADARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
+    && mkdir -p /app/bin \
+    && curl -fsSL "https://radarr.servarr.com/v1/update/${RADARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
-    && \
-    rm -rf /app/bin/Radarr.Update \
-    && \
-    printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[buroa](https://github.com/buroa)\n" "${RADARR__UPDATE__BRANCH}" "${VERSION}" > /app/package_info \
-    && chown -R root:root /app \
-    && chmod -R 755 /app \
-    && rm -rf /tmp/*
+    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[buroa](https://github.com/buroa)\n" "${RADARR__UPDATE__BRANCH}" "${VERSION}" > /app/package_info \
+    && chown -R root:root /app && chmod -R 755 /app \
+    && rm -rf /tmp/* /app/bin/Radarr.Update
 
 COPY ./apps/radarr/entrypoint.sh /entrypoint.sh
 
@@ -52,7 +48,6 @@ USER nobody:nogroup
 WORKDIR /config
 VOLUME ["/config"]
 
-ENTRYPOINT ["/usr/bin/catatonit", "--"]
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/Radarr/Radarr"

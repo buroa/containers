@@ -41,7 +41,6 @@ USER nobody:nogroup
 WORKDIR /data
 VOLUME ["/data"]
 
-ENTRYPOINT ["/usr/bin/catatonit", "--"]
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/foxcpp/maddy"
