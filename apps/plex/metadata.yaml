@@ -1,5 +1,6 @@
 ---
 app: plex
+semver: false
 channels:
   - name: stable
     platforms: ["linux/amd64", "linux/arm64"]

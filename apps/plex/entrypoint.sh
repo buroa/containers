@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
+#shellcheck disable=SC2086,SC2155
 
-#shellcheck disable=SC2155
 export PLEX_MEDIA_SERVER_INFO_MODEL=$(uname -m)
-#shellcheck disable=SC2155
 export PLEX_MEDIA_SERVER_INFO_PLATFORM_VERSION=$(uname -r)
 
 function getPref {
@@ -110,7 +109,6 @@ if [[ "${PLEX_PURGE_CODECS}" == "true" ]]; then
     find "${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}/Plex Media Server/Codecs" -mindepth 1 -not -name '.device-id' -print -delete
 fi
 
-#shellcheck disable=SC2086
 exec \
     /usr/lib/plexmediaserver/Plex\ Media\ Server \
     "$@"
