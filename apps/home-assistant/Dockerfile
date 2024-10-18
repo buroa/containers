@@ -11,6 +11,7 @@ ENV \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
+    UV_SYSTEM_PYTHON=true \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     HOMEASSISTANT_WHEELS="https://wheels.home-assistant.io/musllinux/" \
     HOME="/config"
@@ -98,7 +99,7 @@ RUN \
     uv pip install --system --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         homeassistant=="${VERSION}" \
     && mkdir -p /config && chown nobody:nogroup -R /config \
-    && pip uninstall --yes uv && apk del --purge .build-deps \
+    && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
 COPY ./apps/home-assistant/entrypoint.sh /entrypoint.sh
