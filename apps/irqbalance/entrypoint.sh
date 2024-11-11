@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "Starting irqbalance ..."
-exec /usr/sbin/irqbalance "$@"
+/usr/sbin/irqbalance --daemon
 
 echo "Sleeping ..."
 sleep infinity
