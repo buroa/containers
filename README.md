@@ -110,6 +110,7 @@ Container | Channel | Image
 [actions-runner](https://github.com/buroa/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
 [bazarr](https://github.com/buroa/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
 [home-assistant](https://github.com/buroa/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
+[irqbalance](https://github.com/buroa/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
 [maddy](https://github.com/buroa/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
 [plex](https://github.com/buroa/pkgs/container/plex) | stable | ghcr.io/buroa/plex
 [plex-beta](https://github.com/buroa/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
