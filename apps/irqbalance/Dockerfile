@@ -13,7 +13,7 @@ RUN \
         catatonit \
         irqbalance~"${VERSION}"
 
-COPY ./apps/postgres-init/entrypoint.sh /entrypoint.sh
+COPY ./apps/irqbalance/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
