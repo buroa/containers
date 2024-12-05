@@ -21,7 +21,7 @@ RUN \
     && go build -ldflags "-s -w -X github.com/foxcpp/maddy.Version=${VERSION}" -o ./bin/maddy ./cmd/maddy \
     && chmod +x bin/maddy
 
-FROM docker.io/library/alpine:3.20
+FROM docker.io/library/alpine:3.21
 
 RUN \
     apk add --no-cache \
