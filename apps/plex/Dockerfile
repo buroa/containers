@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:24.10
+FROM docker.io/library/ubuntu:oracular-20241120
 
 ARG TARGETPLATFORM
 ARG VERSION
