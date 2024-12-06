@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.20
+FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -13,7 +13,7 @@ RUN \
         bash \
         ca-certificates \
         catatonit \
-        postgresql16-client~"${VERSION}"
+        postgresql17-client~"${VERSION}"
 
 COPY ./apps/postgres-init/entrypoint.sh /entrypoint.sh
 
