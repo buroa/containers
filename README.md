@@ -107,27 +107,26 @@ Each Image will be built with a `rolling` tag, along with tags specific to it's 
 
 Container | Channel | Image
 --- | --- | ---
-[actions-runner](https://github.com/buroa/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
-[bazarr](https://github.com/buroa/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
-[cni-plugins](https://github.com/buroa/pkgs/container/cni-plugins) | stable | ghcr.io/buroa/cni-plugins
-[home-assistant](https://github.com/buroa/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
-[irqbalance](https://github.com/buroa/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
-[maddy](https://github.com/buroa/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
-[plex](https://github.com/buroa/pkgs/container/plex) | stable | ghcr.io/buroa/plex
-[plex-beta](https://github.com/buroa/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
-[postgres-init](https://github.com/buroa/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
-[prowlarr](https://github.com/buroa/pkgs/container/prowlarr) | master | ghcr.io/buroa/prowlarr
-[prowlarr-develop](https://github.com/buroa/pkgs/container/prowlarr-develop) | develop | ghcr.io/buroa/prowlarr-develop
-[prowlarr-nightly](https://github.com/buroa/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/buroa/prowlarr-nightly
-[qbittorrent](https://github.com/buroa/pkgs/container/qbittorrent) | stable | ghcr.io/buroa/qbittorrent
-[qbittorrent-beta](https://github.com/buroa/pkgs/container/qbittorrent-beta) | beta | ghcr.io/buroa/qbittorrent-beta
-[radarr](https://github.com/buroa/pkgs/container/radarr) | master | ghcr.io/buroa/radarr
-[radarr-develop](https://github.com/buroa/pkgs/container/radarr-develop) | develop | ghcr.io/buroa/radarr-develop
-[radarr-nightly](https://github.com/buroa/pkgs/container/radarr-nightly) | nightly | ghcr.io/buroa/radarr-nightly
-[sabnzbd](https://github.com/buroa/pkgs/container/sabnzbd) | stable | ghcr.io/buroa/sabnzbd
-[sonarr](https://github.com/buroa/pkgs/container/sonarr) | main | ghcr.io/buroa/sonarr
-[sonarr-develop](https://github.com/buroa/pkgs/container/sonarr-develop) | develop | ghcr.io/buroa/sonarr-develop
-[tautulli](https://github.com/buroa/pkgs/container/tautulli) | master | ghcr.io/buroa/tautulli
+[actions-runner](https://github.com/buroa/containers/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
+[bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
+[home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
+[irqbalance](https://github.com/buroa/containers/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
+[maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
+[plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
+[plex-beta](https://github.com/buroa/containers/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
+[postgres-init](https://github.com/buroa/containers/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
+[prowlarr](https://github.com/buroa/containers/pkgs/container/prowlarr) | master | ghcr.io/buroa/prowlarr
+[prowlarr-develop](https://github.com/buroa/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/buroa/prowlarr-develop
+[prowlarr-nightly](https://github.com/buroa/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/buroa/prowlarr-nightly
+[qbittorrent](https://github.com/buroa/containers/pkgs/container/qbittorrent) | stable | ghcr.io/buroa/qbittorrent
+[qbittorrent-beta](https://github.com/buroa/containers/pkgs/container/qbittorrent-beta) | beta | ghcr.io/buroa/qbittorrent-beta
+[radarr](https://github.com/buroa/containers/pkgs/container/radarr) | master | ghcr.io/buroa/radarr
+[radarr-develop](https://github.com/buroa/containers/pkgs/container/radarr-develop) | develop | ghcr.io/buroa/radarr-develop
+[radarr-nightly](https://github.com/buroa/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/buroa/radarr-nightly
+[sabnzbd](https://github.com/buroa/containers/pkgs/container/sabnzbd) | stable | ghcr.io/buroa/sabnzbd
+[sonarr](https://github.com/buroa/containers/pkgs/container/sonarr) | main | ghcr.io/buroa/sonarr
+[sonarr-develop](https://github.com/buroa/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/buroa/sonarr-develop
+[tautulli](https://github.com/buroa/containers/pkgs/container/tautulli) | master | ghcr.io/buroa/tautulli
 
 
 ## Deprecations
