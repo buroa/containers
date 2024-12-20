@@ -1,9 +1,0 @@
----
-app: cni-plugins
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: false
