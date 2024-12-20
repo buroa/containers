@@ -46,7 +46,7 @@ def process_metadata(apps_dir):
             image = {
                 "name": name,
                 "channel": channel["name"],
-                "html_url": f"https://github.com/{repo_owner}/pkgs/container/{name}",
+                "html_url": f"https://github.com/{repo_owner}/containers/pkgs/container/{name}",
                 "owner": repo_owner,
             }
             app_images.append(image)
