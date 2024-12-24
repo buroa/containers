@@ -8,7 +8,7 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV \
-    COMPlus_EnableDiagnostics="0" \
+    DOTNET_EnableDiagnostics="0" \
     RADARR__UPDATE__BRANCH="${CHANNEL}"
 
 USER root
