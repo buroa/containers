@@ -4,19 +4,20 @@ ARG TARGETARCH
 ARG VERSION
 
 ENV \
-    CNI_BIN=/opt/cni
+    CNI_DIR=/opt/cni
 
 USER root
 
 #hadolint ignore=DL3018,DL3013,DL3059,DL4006
 RUN \
     apk add --no-cache \
+        bash \
         catatonit \
         curl \
         tar \
-    && mkdir -p /cni \
+    && mkdir -p /plugins \
     && curl -fsSL "https://github.com/containernetworking/plugins/releases/download/v${VERSION}/cni-plugins-linux-${TARGETARCH}-v${VERSION}.tgz" \
-        | tar xzf - -C /cni --strip-components=1
+        | tar xzf - -C /plugins --strip-components=1
 
 COPY ./apps/cni-plugins/entrypoint.sh /entrypoint.sh
 
