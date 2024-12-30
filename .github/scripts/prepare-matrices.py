@@ -88,7 +88,7 @@ def get_image_metadata(subdir, meta, forRelease=False, force=False, channels=Non
 
     for channel in channels:
         version = get_latest_version(subdir, channel["name"])
-        if not version:
+        if not version or version == "null":
             continue
 
         # Image Name
