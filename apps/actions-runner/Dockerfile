@@ -1,5 +1,6 @@
 ARG VERSION
 FROM --platform=amd64 ghcr.io/actions/actions-runner:${VERSION}
+ARG TARGETARCH
 
 ENV HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_ENV_HINTS=1 \
@@ -15,11 +16,14 @@ RUN \
     && \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
+        curl \
         gcc \
         jo \
         moreutils \
         wget \
         zstd \
+    && curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${TARGETARCH}" -o /usr/local/bin/yq \
+    && chmod +x /usr/local/bin/yq \
     && rm -rf /var/lib/apt/lists/*
 
 USER runner
