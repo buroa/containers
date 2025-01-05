@@ -114,7 +114,6 @@ Container | Channel | Image
 [irqbalance](https://github.com/buroa/containers/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
 [maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
 [plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
-[plex-beta](https://github.com/buroa/containers/pkgs/container/plex-beta) | beta | ghcr.io/buroa/plex-beta
 [postgres-init](https://github.com/buroa/containers/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
 [prowlarr](https://github.com/buroa/containers/pkgs/container/prowlarr) | master | ghcr.io/buroa/prowlarr
 [prowlarr-develop](https://github.com/buroa/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/buroa/prowlarr-develop
