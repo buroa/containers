@@ -24,11 +24,16 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        dpkg \
         jo \
         jq \
+        nano \
+        trurl \
         tzdata \
+        uuidgen \
         xmlstarlet \
+    && \
+    apk add --no-cache --virtual=.build-deps \
+        dpkg \
     && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') export ARCH='amd64' ;; \
@@ -41,6 +46,7 @@ RUN \
     && cp -R /tmp/usr/* /usr \
     && chown -R root:root "${PLEX_MEDIA_SERVER_HOME}" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
+    && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
 COPY ./apps/plex/entrypoint.sh /entrypoint.sh
