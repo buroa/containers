@@ -1,12 +1,8 @@
-FROM docker.io/library/ubuntu:24.10
+FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
-
-ENV DEBCONF_NONINTERACTIVE_SEEN="true" \
-    DEBIAN_FRONTEND="noninteractive" \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE="DontWarn"
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -19,43 +15,33 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PLEX_MEDIA_SERVER_INFO_DEVICE="Docker Container (buroa)"
 
 USER root
-WORKDIR /app
 
-# hadolint ignore=DL3008,DL3015,SC2039,SC2086
+#hadolint ignore=DL3018,DL3059
 RUN \
-    apt-get update \
-    && \
-    apt-get install -y --no-install-recommends --no-install-suggests \
+    apk add --no-cache \
         bash \
         ca-certificates \
         catatonit \
         coreutils \
         curl \
+        dpkg \
         jo \
         jq \
-        nano \
         tzdata \
-        uuid-runtime \
         xmlstarlet \
     && \
     case "${TARGETPLATFORM}" in \
-        'linux/amd64') \
-            export ARCH='amd64'; \
-        ;; \
-        'linux/arm64') \
-            export ARCH='arm64'; \
-        ;; \
+        'linux/amd64') export ARCH='amd64' ;; \
+        'linux/arm64') export ARCH='arm64' ;; \
     esac \
-    && \
-    curl -fsSL -o /tmp/plex.deb \
+    && curl -fsSL -o /tmp/plex.deb \
         "https://downloads.plex.tv/plex-media-server-new/${VERSION}/debian/plexmediaserver_${VERSION}_${ARCH}.deb" \
     && \
-    dpkg -i --force-confold /tmp/plex.deb \
+    dpkg-deb -R /tmp/plex.deb /tmp \
+    && cp -R /tmp/usr/* /usr \
+    && chown -R root:root "${PLEX_MEDIA_SERVER_HOME}" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /etc/default/plexmediaserver /tmp/* /var/lib/apt/lists/* /var/tmp/
+    && rm -rf /tmp/*
 
 COPY ./apps/plex/entrypoint.sh /entrypoint.sh
 
