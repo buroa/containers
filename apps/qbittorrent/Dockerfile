@@ -43,10 +43,10 @@ RUN \
     mkdir -p /app \
     && \
     case "${CHANNEL}" in \
-        'stable') export RELEASE=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_1_2') ;; \
-        'beta') export RELEASE=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_2_0') ;; \
+        'stable') export LIBTORRENT=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_1_2') ;; \
+        'beta') export LIBTORRENT=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_2_0') ;; \
     esac \
-    && curl -fsSL -o /app/qbittorrent-nox "https://github.com/userdocs/qbittorrent-nox-static/releases/download/release-${VERSION}_v${RELEASE}/${ARCH}-qbittorrent-nox" \
+    && curl -fsSL -o /app/qbittorrent-nox "https://github.com/userdocs/qbittorrent-nox-static/releases/download/release-${VERSION}_v${LIBTORRENT}/${ARCH}-qbittorrent-nox" \
     && chown -R root:root /app/qbittorrent-nox \
     && chmod -R 755 /app/qbittorrent-nox \
     && rm -rf /tmp/*

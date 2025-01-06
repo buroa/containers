@@ -4,6 +4,9 @@ ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -13,10 +16,11 @@ ENV \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
-ENV BAZARR__PORT=6767
+ENV \
+    BAZARR__PORT=6767 \
+    BAZARR_PACKAGE_AUTHOR=buroa \
+    BAZARR_PACKAGE_VERSION=${VERSION} \
+    BAZARR_VERSION=${VERSION}
 
 USER root
 WORKDIR /app
@@ -51,11 +55,8 @@ RUN \
     && \
     curl -fsSL -o /tmp/app.zip "https://github.com/morpheus65535/bazarr/releases/download/v${VERSION}/bazarr.zip" \
     && unzip -q /tmp/app.zip -d /app/bin \
-    && \
-    rm -rf /app/bin/bin \
-    && \
-    printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[buroa](https://github.com/buroa)\n" "${VERSION}" > /app/package_info \
-    && pip install --no-cache-dir --find-links https://wheel-index.linuxserver.io/alpine-3.20/ \
+    && rm -rf /app/bin/bin \
+    && pip install --no-cache-dir \
         --requirement /app/bin/requirements.txt \
         --requirement /app/bin/postgres-requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \
