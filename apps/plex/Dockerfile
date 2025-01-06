@@ -1,8 +1,7 @@
 FROM docker.io/library/alpine:3.21
 
-ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -34,16 +33,10 @@ RUN \
     && \
     apk add --no-cache --virtual=.build-deps \
         dpkg \
-    && \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') export ARCH='amd64' ;; \
-        'linux/arm64') export ARCH='arm64' ;; \
-    esac \
     && curl -fsSL -o /tmp/plex.deb \
-        "https://downloads.plex.tv/plex-media-server-new/${VERSION}/debian/plexmediaserver_${VERSION}_${ARCH}.deb" \
+        "https://downloads.plex.tv/plex-media-server-new/${VERSION}/debian/plexmediaserver_${VERSION}_${TARGETARCH}.deb" \
     && \
-    dpkg-deb -R /tmp/plex.deb /tmp \
-    && cp -R /tmp/usr/* /usr \
+    dpkg-deb -x /tmp/plex.deb / \
     && chown -R root:root "${PLEX_MEDIA_SERVER_HOME}" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
     && apk del --purge .build-deps \
