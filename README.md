@@ -119,7 +119,6 @@ Container | Channel | Image
 [prowlarr-develop](https://github.com/buroa/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/buroa/prowlarr-develop
 [prowlarr-nightly](https://github.com/buroa/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/buroa/prowlarr-nightly
 [qbittorrent](https://github.com/buroa/containers/pkgs/container/qbittorrent) | stable | ghcr.io/buroa/qbittorrent
-[qbittorrent-beta](https://github.com/buroa/containers/pkgs/container/qbittorrent-beta) | beta | ghcr.io/buroa/qbittorrent-beta
 [radarr](https://github.com/buroa/containers/pkgs/container/radarr) | master | ghcr.io/buroa/radarr
 [radarr-develop](https://github.com/buroa/containers/pkgs/container/radarr-develop) | develop | ghcr.io/buroa/radarr-develop
 [radarr-nightly](https://github.com/buroa/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/buroa/radarr-nightly
