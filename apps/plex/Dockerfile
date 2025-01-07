@@ -2,6 +2,7 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETARCH
 ARG VERSION
+ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
