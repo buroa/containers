@@ -2,6 +2,7 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETARCH
 ARG VERSION
+ARG CHANNEL
 
 ENV CNI_BIN_DIR=/host/opt/cni/bin
 
