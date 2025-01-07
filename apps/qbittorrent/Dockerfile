@@ -30,6 +30,8 @@ RUN \
         jq \
         nano \
         p7zip \
+        python3 \
+        py3-pip \
         qt6-qtbase \
         qt6-qtbase-sqlite \
         trurl \
@@ -41,11 +43,7 @@ RUN \
     esac \
     && \
     mkdir -p /app \
-    && \
-    case "${CHANNEL}" in \
-        'stable') export LIBTORRENT=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_1_2') ;; \
-        'beta') export LIBTORRENT=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq --raw-output '.libtorrent_2_0') ;; \
-    esac \
+    && LIBTORRENT=$(curl -sL "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json" | jq -r '.libtorrent_2_0') \
     && curl -fsSL -o /app/qbittorrent-nox "https://github.com/userdocs/qbittorrent-nox-static/releases/download/release-${VERSION}_v${LIBTORRENT}/${ARCH}-qbittorrent-nox" \
     && chown -R root:root /app/qbittorrent-nox \
     && chmod -R 755 /app/qbittorrent-nox \
