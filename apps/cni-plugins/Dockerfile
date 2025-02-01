@@ -10,13 +10,13 @@ USER root
 
 #hadolint ignore=DL3018,DL3013,DL3059,DL4006
 RUN \
-    apk add --no-cache \
-        curl \
-        rsync \
-        tar \
+    apk add --no-cache rsync \
+    && apk add --no-cache --virtual=.build-deps curl tar \
     && mkdir -p /plugins \
     && curl -fsSL "https://github.com/containernetworking/plugins/releases/download/v${VERSION}/cni-plugins-linux-${TARGETARCH}-v${VERSION}.tgz" \
-        | tar xzf - -C /plugins --strip-components=1
+        | tar xzf - -C /plugins --strip-components=1 \
+    && apk del --purge .build-deps \
+    && rm -rf /root/.cache /tmp/*
 
 CMD rsync -av /plugins/* $CNI_BIN_DIR
 
