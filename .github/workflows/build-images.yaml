@@ -1,5 +1,6 @@
 ---
-name: Image Build
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Image Build"
 
 on:
   workflow_call:
@@ -64,7 +65,7 @@ jobs:
 
       - name: Install Python Requirements
         shell: bash
-        run: pip install -r ./.github/scripts/requirements.txt && pip freeze
+        run: pip install --requirement ./.github/scripts/requirements.txt && pip freeze
 
       - name: Prepare Matrices
         id: prepare-matrices
@@ -87,7 +88,7 @@ jobs:
   build-platform-images:
     name: Build/Test ${{ matrix.image.name }} (${{ matrix.image.platform }})
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.image.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     if: ${{ toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '' }}
     strategy:
       fail-fast: false
@@ -163,7 +164,7 @@ jobs:
 
       - name: Setup Goss
         if: ${{ matrix.image.tests_enabled }}
-        uses: e1himself/goss-installation-action@v1
+        uses: mlipscombe/goss-installation-action@v1.2.2
         with:
           version: latest
 
@@ -246,7 +247,7 @@ jobs:
     needs: ["prepare", "build-platform-images"]
     # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
     # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
-    if: ${{ always() && inputs.pushImages && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '' }}
+    if: ${{ !cancelled() && inputs.pushImages && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '' }}
     strategy:
       matrix:
         image: ["${{ fromJSON(needs.prepare.outputs.matrices).images }}"]
@@ -314,7 +315,7 @@ jobs:
 
       - name: Build successful
         id: build-success
-        if: ${{ always() && steps.merge.outcome == 'success' && steps.inspect.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.merge.outcome == 'success' && steps.inspect.outcome == 'success' }}
         shell: bash
         run: |
           echo "message=🎉 ${{ matrix.image.name }} (${{ matrix.image.tags[0] }})" >> $GITHUB_OUTPUT
@@ -322,7 +323,7 @@ jobs:
 
       - name: Build failed
         id: build-failed
-        if: ${{ always() && (steps.merge.outcome == 'failure' || steps.inspect.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.merge.outcome == 'failure' || steps.inspect.outcome == 'failure') }}
         shell: bash
         run: |
           echo "message=💥 ${{ matrix.image.name }} (${{ matrix.image.tags[0] }})" >> $GITHUB_OUTPUT
@@ -330,7 +331,7 @@ jobs:
 
       - name: Send Discord Webhook
         uses: sarisia/actions-status-discord@v1
-        if: ${{ always() && inputs.sendNotifications == 'true' }}
+        if: ${{ !cancelled() && inputs.sendNotifications == 'true' }}
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: ${{ steps.build-failed.outputs.message || steps.build-success.outputs.message }}
@@ -342,7 +343,7 @@ jobs:
     name: Build matrix success
     runs-on: ubuntu-latest
     needs: ["prepare", "merge"]
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     steps:
       - name: Check build matrix status
         if: ${{ (inputs.appsToBuild != '' && inputs.appsToBuild != '[]') && (needs.merge.result != 'success' && needs.merge.result != 'skipped' && needs.prepare.result != 'success') }}
