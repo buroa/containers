@@ -123,7 +123,6 @@ Container | Channel | Image
 [radarr-develop](https://github.com/buroa/containers/pkgs/container/radarr-develop) | develop | ghcr.io/buroa/radarr-develop
 [radarr-nightly](https://github.com/buroa/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/buroa/radarr-nightly
 [sabnzbd](https://github.com/buroa/containers/pkgs/container/sabnzbd) | stable | ghcr.io/buroa/sabnzbd
-[socat](https://github.com/buroa/containers/pkgs/container/socat) | stable | ghcr.io/buroa/socat
 [sonarr](https://github.com/buroa/containers/pkgs/container/sonarr) | main | ghcr.io/buroa/sonarr
 [sonarr-develop](https://github.com/buroa/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/buroa/sonarr-develop
 [tautulli](https://github.com/buroa/containers/pkgs/container/tautulli) | master | ghcr.io/buroa/tautulli
