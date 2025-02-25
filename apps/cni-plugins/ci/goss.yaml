@@ -3,3 +3,6 @@
 directory:
   /plugins:
     exists: true
+file:
+  /plugins/test:
+    exists: true
