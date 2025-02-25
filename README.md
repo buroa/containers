@@ -112,7 +112,6 @@ Container | Channel | Image
 [cni-plugins](https://github.com/buroa/containers/pkgs/container/cni-plugins) | stable | ghcr.io/buroa/cni-plugins
 [home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
 [irqbalance](https://github.com/buroa/containers/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
-[maddy](https://github.com/buroa/containers/pkgs/container/maddy) | main | ghcr.io/buroa/maddy
 [plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
 [postgres-init](https://github.com/buroa/containers/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
 [prowlarr](https://github.com/buroa/containers/pkgs/container/prowlarr) | master | ghcr.io/buroa/prowlarr
