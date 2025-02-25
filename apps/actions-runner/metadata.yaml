@@ -3,7 +3,7 @@ app: actions-runner
 semver: true
 channels:
   - name: stable
-    platforms: ["linux/amd64"]
+    platforms: ["linux/amd64", "linux/arm64"]
     stable: true
     tests:
       enabled: true

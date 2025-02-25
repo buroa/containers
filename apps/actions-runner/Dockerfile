@@ -1,5 +1,5 @@
 ARG VERSION
-FROM --platform=amd64 ghcr.io/actions/actions-runner:${VERSION}
+FROM ghcr.io/actions/actions-runner:${VERSION}
 ARG TARGETARCH
 
 ENV DEBCONF_NONINTERACTIVE_SEEN=true \
