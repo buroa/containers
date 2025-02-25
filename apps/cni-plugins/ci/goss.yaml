@@ -1,8 +1,5 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-directory:
-  /plugins:
-    exists: true
 file:
-  /plugins/test:
+  /plugins/macvlan:
     exists: true
