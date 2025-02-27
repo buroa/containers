@@ -5,6 +5,9 @@ ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
 
+ENV UMASK="0002" \
+    TZ="Etc/UTC"
+
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -18,9 +21,6 @@ ENV \
     HOMEASSISTANT_WHEELS="https://wheels.home-assistant.io/musllinux/" \
     HOME="/config" \
     VENV_FOLDER="/config/.venv"
-
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
 
 USER root
 WORKDIR /app
