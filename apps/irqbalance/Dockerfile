@@ -10,11 +10,8 @@ USER root
 RUN \
     apk add --no-cache \
         bash \
-        catatonit \
         irqbalance~"${VERSION}"
 
-COPY ./apps/irqbalance/entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/usr/sbin/irqbalance", "--foreground"]
 
 LABEL org.opencontainers.image.source="https://github.com/irqbalance/irqbalance"
