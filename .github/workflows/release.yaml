@@ -107,13 +107,18 @@ jobs:
           dgoss run ${{ steps.build.outputs.imageid }}
 
       - name: Export Digest
-        run: touch /tmp/${{ steps.build.outputs.digest }}
+        id: digest
+        run: |-
+          digest="${{ steps.build.outputs.digest }}"
+          digest="${digest#sha256:}"
+          touch /tmp/${digest}
+          echo "digest=${digest}" >> $GITHUB_OUTPUT
 
       - name: Upload Digest
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.apps.name }}-${{ matrix.platform }}
-          path: /tmp/${{ steps.build.outputs.digest }}
+          path: /tmp/${{ steps.digest.outputs.digest }}
           if-no-files-found: error
           retention-days: 1
 
@@ -154,7 +159,7 @@ jobs:
         working-directory: /tmp/${{ matrix.apps.name }}
         run: |
           docker buildx imagetools create ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }} \
-              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}@%s' *)
+              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}@sha256:%s' *)
 
       - name: Inspect image
         run: |
