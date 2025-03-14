@@ -158,7 +158,7 @@ jobs:
       - name: Merge Manifests
         working-directory: /tmp/${{ matrix.apps.name }}
         run: |
-          docker buildx imagetools create ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }} \
+          docker buildx imagetools create --tag ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }} \
               $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}@sha256:%s' *)
 
       - name: Inspect image
