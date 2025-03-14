@@ -97,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.apps.app }}-${{ matrix.platform }}
-          path: /tmp/${{ matrix.apps.app }}.tar
+          path: /tmp/${{ matrix.platform }}.tar
 
   merge:
     name: Merge ${{ matrix.apps.app }}
@@ -115,6 +115,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: ${{ matrix.apps.app }}-{amd64,arm64}
+          merge-multiple: true
           path: /tmp/${{ matrix.apps.app }}
 
       - name: Load Image
