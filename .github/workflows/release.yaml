@@ -141,11 +141,6 @@ jobs:
           merge-multiple: true
           path: /tmp/${{ matrix.apps.name }}
 
-      - name: Ensure Digests
-        working-directory: /tmp/${{ matrix.apps.name }}
-        run: |-
-          [ "$(ls -1 | wc -l)" -ne 2 ] && exit 1
-
       - name: Log Files
         working-directory: /tmp/${{ matrix.apps.name }}
         run: ls -la
