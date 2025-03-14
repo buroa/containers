@@ -107,7 +107,7 @@ jobs:
           dgoss run ${{ steps.build.outputs.imageid }}
 
       - name: Write artifact
-        run: echo "${{ steps.build.outputs.imageid }}" > /tmp/${{ matrix.platform }}.txt
+        run: echo "${{ steps.build.outputs.digest }}" > /tmp/${{ matrix.platform }}.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
