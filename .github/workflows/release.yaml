@@ -74,18 +74,6 @@ jobs:
         with:
           version: latest
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
-          tags: |
-            type=semver,pattern={{version}},value=${{ matrix.apps.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.apps.version }}
-            type=semver,pattern={{major}},value=${{ matrix.apps.version }}
-            type=raw,value=${{ matrix.apps.version }}
-
       - name: Build Image
         uses: docker/build-push-action@v6
         id: build
@@ -113,7 +101,7 @@ jobs:
           dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.apps.app }}-${{ matrix.platform }}
-          path: /tmp/${{ matrix.apps.app }}-${{ matrix.platform }}.tar
+          name: ${{ matrix.apps.app }}
+          path: /tmp/${{ matrix.platform }}.tar
