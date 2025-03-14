@@ -47,12 +47,12 @@ jobs:
   build-apps:
     needs: changed-files
     name: Build/Test ${{ matrix.apps.app }} (${{ matrix.platform }})
-    runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     if: ${{ needs.changed-files.outputs.apps != '[]' }}
     strategy:
       matrix:
         apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
-        platform: ["linux/amd64", "linux/arm64"]
+        platform: ["amd64", "arm64"]
       fail-fast: false
     steps:
       - name: Checkout
@@ -83,7 +83,7 @@ jobs:
             VERSION=${{ matrix.apps.version }}
             REVISION=${{ github.sha }}
           context: ./apps/${{ matrix.apps.app }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/${{ matrix.platform }}
           outputs: |-
             type=docker
             type=docker,dest=/tmp/${{ matrix.platform }}.tar
