@@ -80,6 +80,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ matrix.apps.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.apps.version }}
             type=semver,pattern={{major}},value=${{ matrix.apps.version }}
+            type=raw,value=${{ matrix.apps.version }}
 
       - name: Build Image
         uses: docker/build-push-action@v6
