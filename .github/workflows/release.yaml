@@ -120,7 +120,7 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |-
-          dgoss run ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}:${{ steps.build.outputs.digest }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
+          dgoss run ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}@${{ steps.build.outputs.digest }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
 
   merge:
     needs: ["build-apps"]
