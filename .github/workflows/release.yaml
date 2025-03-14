@@ -54,9 +54,6 @@ jobs:
         apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
         platform: ["linux/amd64", "linux/arm64"]
       fail-fast: false
-    outputs:
-      imageid: ${{ steps.build.outputs.imageid }}
-      digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,15 +97,8 @@ jobs:
           context: ./apps/${{ matrix.apps.app }}
           platforms: ${{ matrix.platform }}
           outputs: |-
-            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.app }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          labels: |-
-            org.opencontainers.image.title=${{ matrix.apps.app }}
-            org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
-            org.opencontainers.image.version=${{ matrix.apps.version }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=${{ github.actor }}
+            - type=docker
+            - type=docker,dest=/tmp/${{ matrix.apps.app }}-${{ matrix.platform }}.tar
 
       - name: Run Goss Tests
         if: ${{ matrix.apps.tests.enabled }}
@@ -120,18 +110,10 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |-
-          dgoss run ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}@${{ steps.build.outputs.digest }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
+          dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
 
-  merge:
-    needs: ["build-apps"]
-    name: Merge
-    runs-on: ubuntu-latest
-    steps:
-      - name: Echo Images
-        id: diff
-        run: |
-          output="${{ needs.build-apps.outputs.imageid }}"
-          echo '## Output' >> $GITHUB_STEP_SUMMARY
-          echo '```json' >> $GITHUB_STEP_SUMMARY
-          echo $output | jq >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.apps.app }}-${{ matrix.platform }}
+          path: /tmp/${{ matrix.apps.app }}-${{ matrix.platform }}.tar
