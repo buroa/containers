@@ -32,7 +32,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
-          files: apps/irqbalance/metadata.yaml # TESTING
+          files: apps/**/metadata.yaml # TESTING
 
       - name: Extract App values
         id: apps
