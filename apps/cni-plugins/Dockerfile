@@ -2,7 +2,6 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETARCH
 ARG VERSION
-ARG CHANNEL
 
 ENV CNI_BIN_DIR=/host/opt/cni/bin
 
@@ -15,7 +14,7 @@ RUN \
         rsync \
         tar \
     && mkdir -p /plugins \
-    && curl -fsSL "https://github.com/containernetworking/plugins/releases/download/v${VERSION}/cni-plugins-linux-${TARGETARCH}-v${VERSION}.tgz" \
+    && curl -fsSL "https://github.com/containernetworking/plugins/releases/download/${VERSION}/cni-plugins-linux-${TARGETARCH}-${VERSION}.tgz" \
         | tar xzf - -C /plugins --strip-components=1
 
 CMD rsync -av /plugins/* $CNI_BIN_DIR

@@ -2,7 +2,6 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -49,8 +48,8 @@ RUN \
     && chmod -R 755 /app/qbittorrent-nox \
     && rm -rf /tmp/*
 
-COPY ./apps/qbittorrent/qBittorrent.conf /app/qBittorrent.conf
-COPY ./apps/qbittorrent/entrypoint.sh /entrypoint.sh
+COPY ./qBittorrent.conf /app/qBittorrent.conf
+COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 WORKDIR /config

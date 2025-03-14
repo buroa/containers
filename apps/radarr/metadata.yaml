@@ -1,22 +1,7 @@
 ---
+# renovate: datasource=servarr depName=Radarr
+version: 5.20.0.9752
 app: radarr
-semver: true
-channels:
-  - name: master
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
-  - name: develop
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
-  - name: nightly
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
+tests:
+  enabled: true
+  type: web

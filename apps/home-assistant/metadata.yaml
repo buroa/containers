@@ -1,10 +1,7 @@
 ---
+# renovate: datasource=github-releases depName=home-assistant/core
+version: 2025.3.3
 app: home-assistant
-semver: false
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
+tests:
+  enabled: true
+  type: web

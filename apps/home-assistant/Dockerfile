@@ -3,7 +3,6 @@ FROM docker.io/library/python:3.13.2-alpine
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -107,7 +106,7 @@ RUN \
     && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
-COPY ./apps/home-assistant/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 WORKDIR /config

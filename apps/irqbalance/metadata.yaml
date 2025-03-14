@@ -1,10 +1,7 @@
 ---
+# renovate: datasource=repology depName=alpine_3_21/irqbalance
+version: 1.9.4-r1
 app: irqbalance
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+tests:
+  enabled: true
+  type: cli

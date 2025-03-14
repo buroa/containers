@@ -1,10 +1,7 @@
 ---
+# renovate: datasource=github-releases depName=containernetworking/plugins
+version: v1.6.2
 app: cni-plugins
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+tests:
+  enabled: true
+  type: cli

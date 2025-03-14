@@ -1,50 +1,91 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
     "config:recommended",
-    "docker:enableMajor",
+    ":automergeBranch",
     ":dependencyDashboard",
     ":disableRateLimiting",
-    ":timezone(America/Chicago)",
-    ":semanticCommits"
+    ":semanticCommits",
   ],
-  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
-  "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
-  "packageRules": [
+  dependencyDashboardTitle: "Renovate Dashboard 🤖",
+  suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
+  customDatasources: {
+    "servarr": {
+      defaultRegistryUrlTemplate: "https://{{depName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
+    },
+    "plex": {
+      defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": computer.Linux.version}]}'],
+    },
+    "qbittorrent": {
+      defaultRegistryUrlTemplate: "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
+    },
+  },
+  customManagers: [
     {
-      "addLabels": ["renovate/container", "type/major"],
-      "additionalBranchPrefix": "{{parentDir}}-",
-      "commitMessageExtra": " ({{currentVersion}} → {{newVersion}})",
-      "commitMessagePrefix": "feat({{parentDir}})!: ",
-      "commitMessageTopic": "{{depName}}",
-      "labels": ["app/{{parentDir}}"],
-      "matchDatasources": ["docker"],
-      "matchFileNames": ["apps/**/Dockerfile"],
-      "matchUpdateTypes": ["major"]
+      customType: "regex",
+      description: ["Process annotated dependencies"],
+      fileMatch: ["(^|/)metadata\\.ya?ml$"],
+      matchStrings: [
+        // # renovate: datasource=github-releases depName=kubernetes/kubernetes
+        // version: 1.29.1
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+ (?<currentValue>[v|\\d]\\S+)",
+        // # renovate: datasource=github-releases depName=rancher/system-upgrade-controller
+        // https://github.com/rancher/system-upgrade-controller/releases/download/v0.13.2/crd.yaml
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>[v|\\d][^/]+)",
+      ],
+      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+    },
+  ],
+  packageRules: [
+    {
+      description: "Auto-merge Helm Charts",
+      matchDatasources: ["helm"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["major", "minor", "patch"],
+      ignoreTests: false,
     },
     {
-      "addLabels": ["renovate/container", "type/minor"],
-      "additionalBranchPrefix": "{{parentDir}}-",
-      "commitMessageExtra": "({{currentVersion}} → {{newVersion}})",
-      "commitMessageTopic": "{{depName}}",
-      "labels": ["app/{{parentDir}}"],
-      "matchDatasources": ["docker"],
-      "matchFileNames": ["apps/**/Dockerfile"],
-      "matchUpdateTypes": ["minor"],
-      "semanticCommitScope": "{{parentDir}}",
-      "semanticCommitType": "feat"
+      description: ["Auto-merge GitHub Actions"],
+      matchManagers: ["github-actions"],
+      matchDatasources: ["github-tags"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      ignoreTests: true,
     },
     {
-      "addLabels": ["renovate/container", "type/patch"],
-      "additionalBranchPrefix": "{{parentDir}}-",
-      "commitMessageExtra": "({{currentVersion}} → {{newVersion}})",
-      "commitMessageTopic": "{{depName}}",
-      "labels": ["app/{{parentDir}}"],
-      "matchDatasources": ["docker"],
-      "matchFileNames": ["apps/**/Dockerfile"],
-      "matchUpdateTypes": ["patch"],
-      "semanticCommitScope": "{{parentDir}}",
-      "semanticCommitType": "fix"
-    }
-  ]
+      matchUpdateTypes: ["major"],
+      semanticCommitType: "feat",
+      commitMessagePrefix: "{{semanticCommitType}}({{semanticCommitScope}})!:",
+      commitMessageExtra: "({{currentVersion}} → {{newVersion}})",
+    },
+    {
+      matchUpdateTypes: ["minor"],
+      semanticCommitType: "feat",
+      commitMessageExtra: "({{currentVersion}} → {{newVersion}})",
+    },
+    {
+      matchUpdateTypes: ["patch"],
+      semanticCommitType: "fix",
+      commitMessageExtra: "({{currentVersion}} → {{newVersion}})",
+    },
+    {
+      matchDatasources: ["helm"],
+      semanticCommitScope: "helm",
+      commitMessageTopic: "chart {{depName}}",
+    },
+    {
+      matchManagers: ["github-actions"],
+      semanticCommitType: "ci",
+      semanticCommitScope: "github-action",
+      commitMessageTopic: "action {{depName}}",
+    },
+  ],
 }
