@@ -70,6 +70,18 @@ jobs:
         with:
           version: latest
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ matrix.apps.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.apps.version }}
+            type=semver,pattern={{major}},value=${{ matrix.apps.version }}
+            type=raw,value=rolling
+
       - name: Build Image
         uses: docker/build-push-action@v6
         id: build
@@ -83,6 +95,7 @@ jobs:
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
           labels: |-
             org.opencontainers.image.title=${{ matrix.apps.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
