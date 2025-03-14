@@ -142,12 +142,10 @@ jobs:
           path: /tmp/${{ matrix.apps.name }}
 
       - name: Ensure Digests
-        run: |-
-          [ "$(ls -1 | wc -l)" -ne 2 ] && exit 1
-
-      - name: Log Files
         working-directory: /tmp/${{ matrix.apps.name }}
-        run: ls -la
+        run: |-
+          ls -la
+          [ "$(ls -1 | wc -l)" -ne 2 ] && exit 1
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
