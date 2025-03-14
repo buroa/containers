@@ -9,6 +9,10 @@ on:
     branches: ["master"]
     paths: ["apps/**/metadata.yaml"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   id-token: write
@@ -50,6 +54,9 @@ jobs:
         apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
         platform: ["linux/amd64", "linux/arm64"]
       fail-fast: false
+    outputs:
+      imageid: ${{ steps.build.outputs.imageid }}
+      digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,7 +99,8 @@ jobs:
             REVISION=${{ github.sha }}
           context: ./apps/${{ matrix.apps.app }}
           platforms: ${{ matrix.platform }}
-          load: true
+          outputs: |-
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.app }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: ${{ steps.meta.outputs.tags }}
@@ -104,7 +112,6 @@ jobs:
             org.opencontainers.image.vendor=${{ github.actor }}
 
       - name: Run Goss Tests
-        id: dgoss
         if: ${{ matrix.apps.tests.enabled }}
         env:
           CONTAINER_RUNTIME: docker
@@ -113,6 +120,18 @@ jobs:
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
-        shell: bash
+        run: dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
+
+  merge:
+    needs: ["build-apps"]
+    name: Merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Images
+        id: diff
         run: |
-          dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
+          output=$({{ needs.build-apps.outputs.imageid }})
+          echo '## Output' >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo $output | jq >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
