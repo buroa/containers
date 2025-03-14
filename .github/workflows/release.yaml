@@ -4,10 +4,10 @@ name: Release
 on:
   pull_request:
     branches: ["master"]
-    paths: ["apps/**/metadata.yaml"]
+    paths: ["apps/plex/metadata.yaml"]
   push:
     branches: ["master"]
-    paths: ["apps/**/metadata.yaml"]
+    paths: ["apps/plex/metadata.yaml"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -130,7 +130,7 @@ jobs:
       - name: Echo Images
         id: diff
         run: |
-          output=$({{ needs.build-apps.outputs.imageid }})
+          output="${{ needs.build-apps.outputs.imageid }}"
           echo '## Output' >> $GITHUB_STEP_SUMMARY
           echo '```json' >> $GITHUB_STEP_SUMMARY
           echo $output | jq >> $GITHUB_STEP_SUMMARY
