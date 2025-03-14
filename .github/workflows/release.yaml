@@ -65,8 +65,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}
-          tags: type=raw,value=${{ matrix.apps.version }}-${{ matrix.platform }}
+          images: ${{ matrix.apps.name }}
+          tags: type=raw,value=${{ matrix.platform }}
 
       - name: Build Image
         uses: docker/build-push-action@v6
@@ -142,7 +142,5 @@ jobs:
         uses: Noelware/docker-manifest-action@master
         with:
           inputs: ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }}
-          images: >-
-            ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }}-amd64,
-            ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }}-arm64
+          images: ${{ matrix.apps.name }}:amd64,${{ matrix.apps.name }}:arm64
           push: true
