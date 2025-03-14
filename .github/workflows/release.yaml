@@ -85,8 +85,8 @@ jobs:
           context: ./apps/${{ matrix.apps.app }}
           platforms: ${{ matrix.platform }}
           outputs: |-
-            - type=docker
-            - type=docker,dest=/tmp/${{ matrix.apps.app }}-${{ matrix.platform }}.tar
+            type=docker
+            type=docker,dest=/tmp/${{ matrix.platform }}.tar
 
       - name: Run Goss Tests
         if: ${{ matrix.apps.tests.enabled }}
