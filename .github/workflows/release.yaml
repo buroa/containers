@@ -159,7 +159,7 @@ jobs:
         working-directory: /tmp/${{ matrix.apps.name }}
         run: |
           docker buildx imagetools create --tag ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }} \
-              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}@sha256:%s' *)
+              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
