@@ -46,7 +46,7 @@ jobs:
 
   build:
     needs: changed-files
-    name: Build/Test ${{ matrix.apps.app }} (${{ matrix.platform }})
+    name: Build/Test ${{ matrix.apps.name }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     if: ${{ needs.changed-files.outputs.apps != '[]' }}
     strategy:
@@ -139,7 +139,7 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Merge and Push Images
-        uses: Noelware/docker-manifest-action@v0
+        uses: Noelware/docker-manifest-action@master
         with:
           inputs: ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:${{ matrix.apps.version }}
           images: >-
