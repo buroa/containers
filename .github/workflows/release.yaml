@@ -47,12 +47,12 @@ jobs:
   build-apps:
     needs: changed-files
     name: Build/Test ${{ matrix.apps.app }} (${{ matrix.platform }})
-    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     if: ${{ needs.changed-files.outputs.apps != '[]' }}
     strategy:
       matrix:
         apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
-        platform: ["amd64", "arm64"]
+        platform: ["linux/amd64", "linux/arm64"]
       fail-fast: false
     steps:
       - name: Checkout
@@ -83,10 +83,10 @@ jobs:
             VERSION=${{ matrix.apps.version }}
             REVISION=${{ github.sha }}
           context: ./apps/${{ matrix.apps.app }}
-          platforms: linux/${{ matrix.platform }}
+          platforms: ${{ matrix.platform }}
           outputs: |-
             type=docker
-            type=docker,dest=/tmp/${{ matrix.platform }}.tar
+            type=docker,dest=/tmp/${{ matrix.apps.app }}.tar
 
       - name: Run Goss Tests
         if: ${{ matrix.apps.tests.enabled }}
@@ -103,5 +103,28 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.apps.app }}
-          path: /tmp/${{ matrix.platform }}.tar
+          name: ${{ matrix.apps.app }}-${{ matrix.platform }}
+          path: /tmp/${{ matrix.apps.app }}.tar
+
+  merge:
+    name: Merge ${{ matrix.image.name }}
+    runs-on: ubuntu-latest
+    needs: ["changed-files", "build-apps"]
+    # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
+    # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
+    if: ${{ !cancelled() && needs.changed-files.outputs.apps != '[]' }}
+    strategy:
+      matrix:
+        apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
+      fail-fast: false
+    steps:
+      - name: Download Digests
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ matrix.apps.app }}-linux/{amd64,arm64}
+          merge-multiple: true
+          path: /tmp/${{ matrix.apps.app }}
+
+      - name: Load Image
+        run: |
+          ls /tmp/${{ matrix.apps.app }}
