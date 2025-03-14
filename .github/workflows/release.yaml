@@ -78,7 +78,7 @@ jobs:
             REVISION=${{ github.sha }}
           outputs: |-
             type=docker
-            type=image,name=${{ github.actor }}/${{ matrix.apps.name }},push-by-digest=true,name-canonical=true,push=true
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.name }},push-by-digest=true,name-canonical=true,push=true
           context: ./apps/${{ matrix.apps.name }}
           platforms: linux/${{ matrix.platform }}
           labels: |-
