@@ -2,7 +2,6 @@ FROM docker.io/library/python:3.13-alpine
 
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -51,8 +50,8 @@ RUN \
     && pip uninstall --yes uv && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
-COPY ./apps/sabnzbd/sabnzbd.ini /app/sabnzbd.ini
-COPY ./apps/sabnzbd/entrypoint.sh /entrypoint.sh
+COPY ./sabnzbd.ini /app/sabnzbd.ini
+COPY ./entrypoint.sh /entrypoint.sh
 
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
 

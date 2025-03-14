@@ -2,7 +2,6 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 USER root
 WORKDIR /app
@@ -15,7 +14,7 @@ RUN \
         catatonit \
         postgresql17-client~"${VERSION}"
 
-COPY ./apps/postgres-init/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 

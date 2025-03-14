@@ -1,16 +1,5 @@
 ---
-app: sonarr
-semver: true
-channels:
-  - name: main
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
-  - name: develop
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=servarr depName=Sonarr
+version: 4.0.13.2934
+name: sonarr
+test: true

@@ -1,9 +1,6 @@
 ---
-app: postgres-init
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: false
+# renovate: datasource=repology depName=alpine_3_21/postgres-init
+version: 17.4-r0
+name: postgres-init
+tests:
+  enabled: false

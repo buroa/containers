@@ -1,22 +1,5 @@
 ---
-app: prowlarr
-semver: true
-channels:
-  - name: master
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
-  - name: develop
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
-  - name: nightly
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: false
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=servarr depName=Prowlarr
+version: 1.32.1.4983
+name: prowlarr
+test: true

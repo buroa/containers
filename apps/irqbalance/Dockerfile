@@ -2,7 +2,6 @@ FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 USER root
 

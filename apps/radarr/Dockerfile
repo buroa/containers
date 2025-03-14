@@ -1,15 +1,15 @@
 FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
+ARG VENDOR
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV \
     DOTNET_EnableDiagnostics="0" \
-    RADARR__UPDATE__BRANCH="${CHANNEL}"
+    RADARR__UPDATE__BRANCH="develop"
 
 USER root
 WORKDIR /app
@@ -38,11 +38,11 @@ RUN \
     && mkdir -p /app/bin \
     && curl -fsSL "https://radarr.servarr.com/v1/update/${RADARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
-    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[buroa](https://github.com/buroa)\n" "${RADARR__UPDATE__BRANCH}" "${VERSION}" > /app/package_info \
+    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[%s](https://github.com/%s)\n" "${RADARR__UPDATE__BRANCH}" "${VERSION}" "${VENDOR}" "${VENDOR}" > /app/package_info \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/* /app/bin/Radarr.Update
 
-COPY ./apps/radarr/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 WORKDIR /config

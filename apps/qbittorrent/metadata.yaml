@@ -1,10 +1,5 @@
 ---
-app: qbittorrent
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=qbittorrent depName=qbittorrent
+version: 5.0.4
+name: qbittorrent
+test: true

@@ -1,10 +1,5 @@
 ---
-app: bazarr
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=github-releases depName=morpheus65535/bazarr
+version: v1.5.1
+name: bazarr
+test: true

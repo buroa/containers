@@ -1,10 +1,5 @@
 ---
-app: home-assistant
-semver: false
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=github-releases depName=home-assistant/core
+version: 2025.3.3
+name: home-assistant
+test: true

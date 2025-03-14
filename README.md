@@ -1,9 +1,4 @@
-<!---
-NOTE: AUTO-GENERATED FILE
-to edit this file, instead edit its template at: ./github/scripts/templates/README.md.j2
--->
 <div align="center">
-
 
 ## Containers
 
@@ -15,7 +10,7 @@ _An opinionated collection of container images_
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/buroa/containers?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/buroa/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/buroa/containers/release-scheduled.yaml?style=for-the-badge&label=Scheduled%20Release)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/buroa/containers/release.yaml?style=for-the-badge&label=Release)
 
 </div>
 
@@ -100,32 +95,6 @@ Some applications do not support defining configuration via environment variable
 ## Configuration volume
 
 For applications that need to have persistent configuration data the config volume is hardcoded to `/config` inside the container. This is not able to be changed in most cases.
-
-## Available Images
-
-Each Image will be built with a `rolling` tag, along with tags specific to it's version. Available Images Below
-
-Container | Channel | Image
---- | --- | ---
-[actions-runner](https://github.com/buroa/containers/pkgs/container/actions-runner) | stable | ghcr.io/buroa/actions-runner
-[bazarr](https://github.com/buroa/containers/pkgs/container/bazarr) | stable | ghcr.io/buroa/bazarr
-[cni-plugins](https://github.com/buroa/containers/pkgs/container/cni-plugins) | stable | ghcr.io/buroa/cni-plugins
-[home-assistant](https://github.com/buroa/containers/pkgs/container/home-assistant) | stable | ghcr.io/buroa/home-assistant
-[irqbalance](https://github.com/buroa/containers/pkgs/container/irqbalance) | stable | ghcr.io/buroa/irqbalance
-[plex](https://github.com/buroa/containers/pkgs/container/plex) | stable | ghcr.io/buroa/plex
-[postgres-init](https://github.com/buroa/containers/pkgs/container/postgres-init) | stable | ghcr.io/buroa/postgres-init
-[prowlarr](https://github.com/buroa/containers/pkgs/container/prowlarr) | master | ghcr.io/buroa/prowlarr
-[prowlarr-develop](https://github.com/buroa/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/buroa/prowlarr-develop
-[prowlarr-nightly](https://github.com/buroa/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/buroa/prowlarr-nightly
-[qbittorrent](https://github.com/buroa/containers/pkgs/container/qbittorrent) | stable | ghcr.io/buroa/qbittorrent
-[radarr](https://github.com/buroa/containers/pkgs/container/radarr) | master | ghcr.io/buroa/radarr
-[radarr-develop](https://github.com/buroa/containers/pkgs/container/radarr-develop) | develop | ghcr.io/buroa/radarr-develop
-[radarr-nightly](https://github.com/buroa/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/buroa/radarr-nightly
-[sabnzbd](https://github.com/buroa/containers/pkgs/container/sabnzbd) | stable | ghcr.io/buroa/sabnzbd
-[sonarr](https://github.com/buroa/containers/pkgs/container/sonarr) | main | ghcr.io/buroa/sonarr
-[sonarr-develop](https://github.com/buroa/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/buroa/sonarr-develop
-[tautulli](https://github.com/buroa/containers/pkgs/container/tautulli) | master | ghcr.io/buroa/tautulli
-
 
 ## Deprecations
 

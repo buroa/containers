@@ -1,10 +1,5 @@
 ---
-app: actions-runner
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+# renovate: datasource=docker depName=ghcr.io/actions/runner
+version: 2.322.0
+name: actions-runner
+test: false

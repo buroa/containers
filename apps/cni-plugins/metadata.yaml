@@ -1,10 +1,5 @@
 ---
-app: cni-plugins
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+# renovate: datasource=github-releases depName=containernetworking/plugins
+version: v1.6.2
+name: cni-plugins
+test: false

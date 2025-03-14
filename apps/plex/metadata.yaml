@@ -1,10 +1,5 @@
 ---
-app: plex
-semver: false
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: true
-      type: web
+# renovate: datasource=plex depName=plex
+version: 1.41.5.9522-a96edc606
+name: plex
+test: true
