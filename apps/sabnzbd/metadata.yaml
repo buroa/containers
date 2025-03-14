@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=github-releases depName=sabnzbd/sabnzbd
 version: 4.4.1
-app: sabnzbd
-tests:
-  enabled: true
-  type: web
+name: sabnzbd
+test: true

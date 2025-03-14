@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=github-releases depName=Tautulli/Tautulli
 version: 2.15.1
-app: tautulli
-tests:
-  enabled: true
-  type: web
+name: tautulli
+test: true

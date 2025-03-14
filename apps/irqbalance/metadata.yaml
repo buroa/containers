@@ -1,7 +1,7 @@
 ---
 # renovate: datasource=repology depName=alpine_3_21/irqbalance
 version: 1.9.4-r1
-app: irqbalance
+name: irqbalance
 tests:
   enabled: true
   type: cli

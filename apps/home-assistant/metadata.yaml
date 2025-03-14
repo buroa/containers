@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=github-releases depName=home-assistant/core
 version: 2025.3.3
-app: home-assistant
-tests:
-  enabled: true
-  type: web
+name: home-assistant
+test: true

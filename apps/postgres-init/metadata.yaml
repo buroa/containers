@@ -1,6 +1,6 @@
 ---
 # renovate: datasource=repology depName=alpine_3_21/postgres-init
 version: 17.4-r0
-app: postgres-init
+name: postgres-init
 tests:
   enabled: false

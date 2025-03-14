@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=plex depName=plex
 version: 1.41.5.9522-a96edc606
-app: plex
-tests:
-  enabled: true
-  type: web
+name: plex
+test: true

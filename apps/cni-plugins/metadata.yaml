@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=github-releases depName=containernetworking/plugins
 version: v1.6.2
-app: cni-plugins
-tests:
-  enabled: true
-  type: cli
+name: cni-plugins
+test: false

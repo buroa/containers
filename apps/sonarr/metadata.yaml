@@ -1,7 +1,5 @@
 ---
 # renovate: datasource=servarr depName=Sonarr
 version: 4.0.13.2934
-app: sonarr
-tests:
-  enabled: true
-  type: web
+name: sonarr
+test: true
