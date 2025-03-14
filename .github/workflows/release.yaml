@@ -103,7 +103,6 @@ jobs:
             type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.app }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{ steps.meta.outputs.tags }}
           labels: |-
             org.opencontainers.image.title=${{ matrix.apps.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
