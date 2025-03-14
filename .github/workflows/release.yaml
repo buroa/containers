@@ -104,6 +104,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           load: true
+          push: true
           labels: |-
             org.opencontainers.image.title=${{ matrix.apps.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
@@ -120,7 +121,8 @@ jobs:
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
+        run: |-
+          dgoss run ${{ steps.build.outputs.imageid }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' || '' }}
 
   merge:
     needs: ["build-apps"]
