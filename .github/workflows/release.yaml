@@ -101,4 +101,4 @@ jobs:
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         shell: bash
         run: |
-          dgoss run ${{ steps.build.output.digest }} ${{ matrix.apps.tests.type == "cli" && "tail -f /dev/null" }}
+          dgoss run ${{ steps.build.output.digest }} ${{ matrix.apps.tests.type == 'cli' && 'tail -f /dev/null' }}
