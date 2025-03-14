@@ -160,4 +160,4 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ ${{ github.actor }}/${{ matrix.apps.name }}:{{ matrix.apps.version }}
+          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}:{{ matrix.apps.version }}
