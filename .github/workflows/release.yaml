@@ -144,4 +144,4 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Push Image
-        run: docker push ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
+        run: docker image push --all-tags ghcr.io/${{ github.actor }}/${{ matrix.apps.app }}
