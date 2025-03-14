@@ -80,6 +80,7 @@ jobs:
             REVISION=${{ github.sha }}
           context: ./apps/${{ matrix.apps.app }}
           platforms: ${{ matrix.platform }}
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: |-
