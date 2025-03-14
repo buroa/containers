@@ -119,7 +119,7 @@ jobs:
 
       - name: Load Image
         run: |
-          ls -la /tmp/${{ matrix.apps.app }}
+          ls -la -R /tmp/${{ matrix.apps.app }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
