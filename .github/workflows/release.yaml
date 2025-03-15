@@ -58,7 +58,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: "${{ github.actor }}"
+          username: "${{ github.repository_owner }}"
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Setup Docker Buildx
@@ -69,7 +69,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
           tags: |
             type=raw,value=${{ github.sha }}-${{ matrix.platform }}
           flavor: |
@@ -80,7 +80,7 @@ jobs:
         id: build
         with:
           build-args: |-
-            VENDOR=${{ github.actor }}
+            VENDOR=${{ github.repository_owner }}
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
           context: ./apps/${{ matrix.app.name }}
@@ -108,7 +108,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
           tags: |
             type=match,pattern=^(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ matrix.app.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
@@ -127,16 +127,16 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: "${{ github.actor }}"
+          username: "${{ github.repository_owner }}"
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Push Images
         uses: Noelware/docker-manifest-action@master
         with:
           inputs: ${{ steps.tags.outputs.tags }}
-          images: ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
           push: true
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
+          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ matrix.app.version }}
