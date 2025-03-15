@@ -3,10 +3,10 @@
   packageRules: [
     {
       description: ["Auto-merge container app updates"],
+      matchFileNames: ["**/metadata.yaml"],
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,
-      matchFileNames: ["**/metadata.yaml"],
     },
     {
       description: ["Auto-merge GitHub Actions"],
