@@ -48,7 +48,7 @@ jobs:
     if: ${{ needs.changed.outputs.any_changed }}
     strategy:
       matrix:
-        app: ${{ needs.changed.outputs.all_changed_and_modified_files }}
+        app: ${{ needs.changed.outputs.apps }}
         platform: ["amd64", "arm64"]
       fail-fast: false
     steps:
