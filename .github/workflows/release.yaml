@@ -125,6 +125,7 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Push Images
+        id: push
         uses: Noelware/docker-manifest-action@master
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
@@ -138,9 +139,8 @@ jobs:
 
       - name: Sign Image
         run: |
-          for tags in ${{ join(fromJSON(steps.meta.outputs.json).tags, ' ') }}; do
-            cosign sign --yes ${tags}
-          done
+          digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
+          cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}@${digest}
 
       - name: Inspect image
         run: |
