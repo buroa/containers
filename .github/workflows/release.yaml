@@ -5,9 +5,6 @@ on:
   push:
     branches: ["master"]
     paths: ["apps/**"]
-  pull_request: # TODO: TESTING ONLY
-    branches: ["master"]
-    paths: ["apps/**"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -19,7 +16,7 @@ permissions:
   packages: write
 
 jobs:
-  changed-files:
+  changed-apps:
     name: Get Changed Apps
     runs-on: ubuntu-latest
     outputs:
@@ -30,7 +27,7 @@ jobs:
 
       - name: Determine changed files
         uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
-        id: changed-files
+        id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
@@ -38,21 +35,19 @@ jobs:
 
       - name: Extract App values
         id: apps
-        env:
-          FILTER: '[.]'
         working-directory: apps
         run: |
-          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-files.outputs.all_changed_and_modified_files }})
-          apps=$(yq eval-all --indent=0 --output-format=json "${FILTER}" ${apps})
+          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }})
+          apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
 
   build:
-    needs: changed-files
+    needs: changed-apps
     name: Build/Test ${{ matrix.app.name }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.changed-files.outputs.apps) }}
+        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
         platform: ["amd64", "arm64"]
       fail-fast: false
     steps:
@@ -78,8 +73,7 @@ jobs:
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
           outputs: |-
-            type=docker
-            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app.name }},push-by-digest=true,name-canonical=true,push=true
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-${{ matrix.platform }},push=true
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           labels: |-
@@ -89,70 +83,18 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.actor }}
 
-      - name: Setup Goss
-        if: ${{ matrix.app.test }}
-        uses: mlipscombe/goss-installation-action@v1.2.2
-        with:
-          version: latest
-
-      - name: Run Goss Tests
-        if: ${{ matrix.app.test }}
-        env:
-          CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ matrix.app.name }}/ci/goss.yaml
-          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
-          GOSS_SLEEP: 2
-          GOSS_FILES_STRATEGY: cp
-          CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: |-
-          dgoss run ${{ steps.build.outputs.imageid }}
-
-      - name: Export Digest
-        id: digest
-        run: |-
-          digest="${{ steps.build.outputs.digest }}"
-          digest="${digest#sha256:}"
-          touch /tmp/${digest}
-          echo "digest=${digest}" >> $GITHUB_OUTPUT
-
-      - name: Upload Digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.app.name }}-${{ matrix.platform }}
-          path: /tmp/${{ steps.digest.outputs.digest }}
-          if-no-files-found: error
-          retention-days: 1
-
   merge:
     name: Merge ${{ matrix.app.name }}
     runs-on: ubuntu-latest
-    needs: ["changed-files", "build"]
+    needs: ["changed-apps", "build"]
     # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
     # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
     if: ${{ !cancelled() }}
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.changed-files.outputs.apps) }}
+        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
       fail-fast: false
     steps:
-      - name: Download Digests
-        uses: actions/download-artifact@v4
-        with:
-          pattern: ${{ matrix.app.name }}-{amd64,arm64}
-          merge-multiple: true
-          path: /tmp/${{ matrix.app.name }}
-
-      - name: Log Files
-        working-directory: /tmp/${{ matrix.app.name }}
-        run: ls -la
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: "${{ github.actor }}"
-          password: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -164,17 +106,32 @@ jobs:
             ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
           tags: |
             type=semver,pattern={{version}},value=${{ matrix.app.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }}
-            type=semver,pattern={{major}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
+            type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
             type=raw,value=rolling
 
-      - name: Merge Manifests
-        working-directory: /tmp/${{ matrix.app.name }}
-        run: |
-          echo $(echo "${{ steps.meta.outputs.tags }}" | xargs -I{} echo --tag {})
-          # docker buildx imagetools create $(echo "${{ steps.meta.outputs.tags }}" | xargs -I{} echo --tag {}) \
-          #     $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.app.name }}@sha256:%s ' *)
+      - name: Extract Tags
+        id: tags
+        run: |-
+          tags=$(echo "${{ steps.meta.outputs.json }}" | jq -r '.tags | join(",")')
+          echo "tags=${tags}" >> $GITHUB_OUTPUT
 
-      # - name: Inspect image
-      #   run: |
-      #     docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Push Images
+        uses: Noelware/docker-manifest-action@master
+        with:
+          inputs: ${{ steps.tags.outputs.tags }}
+          images: >-
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
+          push: true
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
