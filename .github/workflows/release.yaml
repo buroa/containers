@@ -78,7 +78,7 @@ jobs:
             REVISION=${{ github.sha }}
           outputs: |-
             type=docker
-            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.name }},push-by-digest=true,name-canonical=true,push=true
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.name }},push-by-digest=true,name-canonical=true,${{ github.event_name != 'pull_request' && 'push=true' || 'push=false' }}
           context: ./apps/${{ matrix.apps.name }}
           platforms: linux/${{ matrix.platform }}
           labels: |-
@@ -107,6 +107,7 @@ jobs:
           dgoss run ${{ steps.build.outputs.imageid }}
 
       - name: Export Digest
+        if: ${{ github.event_name != 'pull_request' }}
         id: digest
         run: |-
           digest="${{ steps.build.outputs.digest }}"
@@ -115,6 +116,7 @@ jobs:
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
       - name: Upload Digest
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.apps.name }}-${{ matrix.platform }}
@@ -128,7 +130,7 @@ jobs:
     needs: ["changed-files", "build"]
     # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
     # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
-    if: ${{ !cancelled() && needs.changed-files.outputs.apps != '[]' }}
+    if: ${{ !cancelled() && needs.changed-files.outputs.apps != '[]' && github.event_name != 'pull_request' }}
     strategy:
       matrix:
         apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
