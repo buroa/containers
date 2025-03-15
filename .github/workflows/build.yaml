@@ -23,19 +23,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - name: Determine changed files
-        uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
-        id: changed-files
+      - name: Determine Changed Directories
+        uses: tj-actions/changed-files@a284dc1814e3fd07f2e34267fc8f81227ed29fb8 # v45
+        id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
           path: apps
 
-      - name: Extract apps metadata
+      - name: Extract Metadata
         id: apps
         working-directory: apps
         run: |
-          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-files.outputs.all_changed_and_modified_files }})
+          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
 

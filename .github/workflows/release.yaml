@@ -25,15 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - name: Determine changed files
-        uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
+      - name: Determine Changed Directories
+        uses: tj-actions/changed-files@a284dc1814e3fd07f2e34267fc8f81227ed29fb8 # v45
         id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
           path: apps
 
-      - name: Extract App values
+      - name: Extract Metadata
         id: apps
         working-directory: apps
         run: |
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
 
-      - name: Docker meta
+      - name: Docker Meta
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
@@ -103,7 +103,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
 
-      - name: Docker meta
+      - name: Docker Meta
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
