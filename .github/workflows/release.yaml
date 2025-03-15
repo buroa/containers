@@ -165,6 +165,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}}-{{revision}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}},value=${{ matrix.app.version }}
             type=raw,value=${{ matrix.app.version }}
             type=raw,value=rolling
@@ -172,4 +173,9 @@ jobs:
       - name: Merge Manifests
         working-directory: /tmp/${{ matrix.app.name }}
         run: |
-          echo "${{ steps.meta.outputs.tags }}"
+          docker buildx imagetools create --tag $(echo "${{ steps.meta.outputs.tags }}" | xargs) \
+              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.app.name }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
