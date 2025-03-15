@@ -171,10 +171,10 @@ jobs:
       - name: Merge Manifests
         working-directory: /tmp/${{ matrix.app.name }}
         run: |
-          tags=$(echo "${{ steps.meta.outputs.tags }}" | xargs -I{} echo --tag {})
-          docker buildx imagetools create ${tags} \
-              $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.app.name }}@sha256:%s ' *)
+          echo $(echo "${{ steps.meta.outputs.tags }}" | xargs -I{} echo --tag {})
+          # docker buildx imagetools create $(echo "${{ steps.meta.outputs.tags }}" | xargs -I{} echo --tag {}) \
+          #     $(printf 'ghcr.io/${{ github.actor }}/${{ matrix.app.name }}@sha256:%s ' *)
 
-      - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
+      # - name: Inspect image
+      #   run: |
+      #     docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
