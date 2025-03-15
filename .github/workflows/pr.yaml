@@ -45,7 +45,6 @@ jobs:
     needs: changed
     name: Build/Test ${{ matrix.app }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
-    if: ${{ needs.changed.outputs.any_changed }}
     strategy:
       matrix:
         app: ${{ needs.changed.outputs.apps }}
