@@ -51,6 +51,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get Metadata
+        id: metadata
+        run: |-
+          echo "version=$(yq '.version' apps/${{ matrix.app }}/metadata.yaml)" >> $GITHUB_ENV
+          echo "test=$(yq '.test' apps/${{ matrix.app }}/metadata.yaml)" >> $GITHUB_ENV
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -67,31 +73,31 @@ jobs:
         with:
           build-args: |-
             VENDOR=${{ github.actor }}
-            VERSION=${{ matrix.apps.version }}
+            VERSION=${{ steps.metadata.outputs.version }}
             REVISION=${{ github.sha }}
           outputs: |-
             type=docker
-            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.apps.name }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
-          context: ./apps/${{ matrix.apps.name }}
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          context: ./apps/${{ matrix.app }}
           platforms: linux/${{ matrix.platform }}
           labels: |-
-            org.opencontainers.image.title=${{ matrix.apps.name }}
-            org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.apps.name }}
-            org.opencontainers.image.version=${{ matrix.apps.version }}
+            org.opencontainers.image.title=${{ matrix.app }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.app }}
+            org.opencontainers.image.version=${{ steps.metadata.outputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.actor }}
 
       - name: Setup Goss
-        if: ${{ matrix.apps.test }}
+        if: ${{ steps.metadata.outputs.test }}
         uses: mlipscombe/goss-installation-action@v1.2.2
         with:
           version: latest
 
       - name: Run Goss Tests
-        if: ${{ matrix.apps.test }}
+        if: ${{ steps.metadata.outputs.test }}
         env:
           CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ matrix.apps.name }}/ci/goss.yaml
+          GOSS_FILE: ./apps/${{ matrix.app }}/ci/goss.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
@@ -112,7 +118,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.apps.name }}-${{ matrix.platform }}
+          name: ${{ matrix.app }}-${{ matrix.platform }}
           path: /tmp/${{ steps.digest.outputs.digest }}
           if-no-files-found: error
           retention-days: 1
