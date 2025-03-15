@@ -72,7 +72,7 @@ jobs:
         id: build
         with:
           build-args: |-
-            VENDOR=${{ github.actor }}
+            VENDOR=${{ github.repository_owner }}
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
           outputs: |-
