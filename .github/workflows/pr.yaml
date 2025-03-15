@@ -19,7 +19,7 @@ permissions:
   packages: write
 
 jobs:
-  changed:
+  changed-files:
     name: Get Changed Apps
     runs-on: ubuntu-latest
     outputs:
@@ -34,20 +34,17 @@ jobs:
         with:
           dir_names: true
           dir_names_max_depth: "1"
+          matrix: true
           path: apps
           separator: ","
 
-      - name: Output changed
-        run: |-
-          echo ${{ steps.changed-apps.outputs.all_changed_and_modified_files }}
-
   build:
-    needs: changed
+    needs: changed-files
     name: Build/Test ${{ matrix.app }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
-        app: ${{ needs.changed.outputs.apps }}
+        app: ${{ fromJSON(needs.changed-files.outputs.apps) }}
         platform: ["amd64", "arm64"]
       fail-fast: false
     steps:
