@@ -87,6 +87,7 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           push: true
 
   merge:
