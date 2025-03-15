@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=custom.servarr depName=sonarr
+# renovate: datasource=custom.sonarr depName=sonarr
 version: 4.0.13.2934
 name: sonarr
 test: true

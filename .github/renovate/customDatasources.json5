@@ -1,0 +1,25 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  customDatasources: {
+    "sonarr": {
+      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/download/develop?version=4.0",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": version}]}'],
+    },
+    "servarr": {
+      defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
+    },
+    "plex": {
+      defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": computer.Linux.version}]}'],
+    },
+    "qbittorrent": {
+      defaultRegistryUrlTemplate: "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
+    },
+  },
+}
