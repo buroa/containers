@@ -37,6 +37,10 @@ jobs:
           path: apps
           separator: ","
 
+      - name: Output changed
+        run: |-
+          echo ${{ steps.changed-apps.outputs.all_changed_and_modified_files }}
+
   build:
     needs: changed
     name: Build/Test ${{ matrix.app }} (${{ matrix.platform }})
