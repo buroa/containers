@@ -133,9 +133,7 @@ jobs:
         uses: Noelware/docker-manifest-action@master
         with:
           inputs: ${{ steps.tags.outputs.tags }}
-          images: >-
-            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,
-            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
+          images: ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
           push: true
 
       - name: Inspect image
