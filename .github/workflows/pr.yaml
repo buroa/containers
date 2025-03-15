@@ -23,14 +23,14 @@ jobs:
     name: Get Changed Apps
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.changed-apps.outputs.all_changed_and_modified_files }}
+      apps: ${{ steps.apps.outputs.apps }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Determine changed apps
+      - name: Determine changed files
         uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
-        id: changed-apps
+        id: changed-files
         with:
           dir_names: true
           dir_names_max_depth: "1"
@@ -45,7 +45,7 @@ jobs:
           apps=$(yq eval-all --indent=0 --output-format=json "${FILTER}" \
               ${{ steps.changed-files.outputs.all_changed_and_modified_files }} \
           )
-          echo "apps=${apps}" >> $GITHUB_OUTPUT
+          # echo "apps=${apps}" >> $GITHUB_OUTPUT
 
   build:
     needs: changed-files
