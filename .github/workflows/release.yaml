@@ -166,6 +166,8 @@ jobs:
             type=semver,pattern={{version}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}}.{{minor}}-{{revision}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}-{{revision}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}},value=${{ matrix.app.version }}
             type=raw,value=${{ matrix.app.version }}
             type=raw,value=rolling
