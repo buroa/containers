@@ -71,7 +71,7 @@ jobs:
           images: |
             ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
           tags: |
-            type=sha,format=long,suffix=-${{ matrix.platform }}
+            type=raw,value=${{ github.sha }}-${{ matrix.platform }}
           flavor: |
             latest=false
 
