@@ -4,10 +4,10 @@ name: Release
 on:
   pull_request:
     branches: ["master"]
-    paths: ["apps/**/metadata.yaml"]
+    paths: ["apps/**"]
   push:
     branches: ["master"]
-    paths: ["apps/**/metadata.yaml"]
+    paths: ["apps/**"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -19,39 +19,32 @@ permissions:
   packages: write
 
 jobs:
-  changed-files:
-    name: Get Changed Files
+  changed:
+    name: Get Changed Apps
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.apps.outputs.apps }}
+      apps: ${{ steps.changed-apps.outputs.all_changed_and_modified_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get Changed Files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
+      - name: Determine changed apps
+        uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
+        id: changed-apps
         with:
-          files: apps/**/metadata.yaml
-
-      - name: Extract App values
-        id: apps
-        env:
-          FILTER: '[.]'
-        run: |
-          apps=$(yq eval-all --indent=0 --output-format=json "${FILTER}" \
-              ${{ steps.changed-files.outputs.all_changed_and_modified_files }} \
-          )
-          echo "apps=${apps}" >> $GITHUB_OUTPUT
+          dir_names: true
+          dir_names_max_depth: "1"
+          path: apps
+          separator: ","
 
   build:
-    needs: changed-files
-    name: Build/Test ${{ matrix.apps.name }} (${{ matrix.platform }})
+    needs: changed
+    name: Build/Test ${{ matrix.app }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
-    if: ${{ needs.changed-files.outputs.apps != '[]' }}
+    if: ${{ needs.changed.outputs.any_changed }}
     strategy:
       matrix:
-        apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
+        app: ${{ needs.changed.outputs.all_changed_and_modified_files }}
         platform: ["amd64", "arm64"]
       fail-fast: false
     steps:
