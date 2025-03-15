@@ -40,7 +40,7 @@ jobs:
       apps: ${{ steps.apps.outputs.apps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Extract apps metadata
         id: apps
@@ -62,13 +62,13 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
 
       - name: Build Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6
         id: build
         with:
           build-args: |-
@@ -82,7 +82,7 @@ jobs:
 
       - name: Setup Goss
         if: ${{ matrix.app.test }}
-        uses: mlipscombe/goss-installation-action@v1.2.2
+        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
         with:
           version: latest
 
