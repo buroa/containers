@@ -110,7 +110,8 @@ jobs:
           images: |
             ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
           tags: |
-            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ matrix.app.version }}
+            type=match,pattern=^(.*)-.*$,group=1
+            type=semver,pattern={{version}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
             type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
             type=raw,value=rolling
