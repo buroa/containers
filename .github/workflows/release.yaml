@@ -110,7 +110,7 @@ jobs:
           images: |
             ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
           tags: |
-            type=match,pattern="^(\d+(?:\.\d+){0,3})",group=1
+            type=match,pattern=^(\d+(?:\.\d+){0\\,3}),group=1
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
             type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
             type=raw,value=rolling
