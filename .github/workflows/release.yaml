@@ -144,4 +144,4 @@ jobs:
       - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           package: ${{ matrix.app.name }}
-          delete-tags: ${{ github.sha }}*
+          delete-tags: ${{ github.sha }}-amd64
