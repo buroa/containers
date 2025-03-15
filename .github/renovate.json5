@@ -3,11 +3,11 @@
   extends: [
     "config:recommended",
     "docker:enableMajor",
+    "helpers:pinGitHubActionDigests",
     ":automergeBranch",
     ":disableRateLimiting",
     ":dependencyDashboard",
     ":semanticCommits",
-    ":skipStatusChecks",
     ":timezone(America/Chicago)",
     "github>buroa/containers//.github/renovate/autoMerge.json5",
     "github>buroa/containers//.github/renovate/customDatasources.json5",

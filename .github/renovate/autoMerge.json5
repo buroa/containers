@@ -6,7 +6,7 @@
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,
-      matchFileNames: ["(^|/)metadata.yaml"],
+      matchFileNames: ["**/metadata.yaml"],
     },
     {
       description: ["Auto-merge GitHub Actions"],
