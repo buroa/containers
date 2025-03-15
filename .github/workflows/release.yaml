@@ -140,8 +140,3 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
-
-      - uses: dataaxiom/ghcr-cleanup-action@v1
-        with:
-          package: ${{ matrix.app.name }}
-          delete-tags: ${{ github.sha }}-amd64
