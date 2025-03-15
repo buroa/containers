@@ -2,10 +2,10 @@
 name: Release
 
 on:
-  pull_request:
+  push:
     branches: ["master"]
     paths: ["apps/**"]
-  push:
+  pull_request: # TODO: TESTING ONLY
     branches: ["master"]
     paths: ["apps/**"]
 
@@ -79,7 +79,7 @@ jobs:
             REVISION=${{ github.sha }}
           outputs: |-
             type=docker
-            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app.name }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app.name }},push-by-digest=true,name-canonical=true,push=true
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           labels: |-
@@ -108,7 +108,6 @@ jobs:
           dgoss run ${{ steps.build.outputs.imageid }}
 
       - name: Export Digest
-        if: ${{ github.event_name != 'pull_request' }}
         id: digest
         run: |-
           digest="${{ steps.build.outputs.digest }}"
@@ -117,7 +116,6 @@ jobs:
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
       - name: Upload Digest
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.app.name }}-${{ matrix.platform }}
@@ -131,10 +129,10 @@ jobs:
     needs: ["changed-files", "build"]
     # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
     # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
-    if: ${{ !cancelled() && needs.changed-files.outputs.apps != '[]' && github.event_name != 'pull_request' }}
+    if: ${{ !cancelled() }}
     strategy:
       matrix:
-        apps: ${{ fromJSON(needs.changed-files.outputs.apps) }}
+        app: ${{ fromJSON(needs.changed-files.outputs.apps) }}
       fail-fast: false
     steps:
       - name: Download Digests
@@ -157,6 +155,18 @@ jobs:
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}},value=${{ matrix.app.version }}
+            type=raw,value=${{ matrix.app.version }}
 
       - name: Merge Manifests
         working-directory: /tmp/${{ matrix.app.name }}
