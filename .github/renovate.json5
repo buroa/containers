@@ -11,7 +11,7 @@
   suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
   customDatasources: {
     "servarr": {
-      defaultRegistryUrlTemplate: "https://{{depName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
+      defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
