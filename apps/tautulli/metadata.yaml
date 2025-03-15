@@ -1,6 +1,6 @@
 ---
 # renovate: datasource=github-releases depName=Tautulli/Tautulli
-version: 2.15.0
+version: 2.15.1
 name: tautulli
 semver: true
 test: true
