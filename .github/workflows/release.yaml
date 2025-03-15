@@ -126,7 +126,7 @@ jobs:
 
       - name: Push Images
         id: push
-        uses: Noelware/docker-manifest-action@master
+        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # v0
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           images: >-
