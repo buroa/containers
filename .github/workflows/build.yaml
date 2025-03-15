@@ -53,7 +53,7 @@ jobs:
 
   build:
     if: ${{ needs.pre-job.outputs.any_changed == 'true' }}
-    name: Build/Test ${{ matrix.app.name }} (${{ matrix.platform }})
+    name: ${{ matrix.app.test && 'Build/Test' || 'Build' }} ${{ matrix.app.name }} (${{ matrix.platform }})
     needs: changed-apps
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
