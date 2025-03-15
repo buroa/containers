@@ -1,0 +1,137 @@
+---
+name: Release
+
+on:
+  push:
+    branches: ["master"]
+    paths: ["apps/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  changed-apps:
+    name: Get Changed Apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.apps.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine changed files
+        uses: JJGadgets/tj-actions-changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
+        id: changed-dirs
+        with:
+          dir_names: true
+          dir_names_max_depth: "1"
+          path: apps
+
+      - name: Extract App values
+        id: apps
+        working-directory: apps
+        run: |
+          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }})
+          apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
+          echo "apps=${apps}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: changed-apps
+    name: Build/Test ${{ matrix.app.name }} (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
+        platform: ["amd64", "arm64"]
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Image
+        uses: docker/build-push-action@v6
+        id: build
+        with:
+          build-args: |-
+            VENDOR=${{ github.actor }}
+            VERSION=${{ matrix.app.version }}
+            REVISION=${{ github.sha }}
+          outputs: |-
+            type=image,name=ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-${{ matrix.platform }},push=true
+          context: ./apps/${{ matrix.app.name }}
+          platforms: linux/${{ matrix.platform }}
+          labels: |-
+            org.opencontainers.image.title=${{ matrix.app.name }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
+            org.opencontainers.image.version=${{ matrix.app.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.actor }}
+
+  merge:
+    name: Merge ${{ matrix.app.name }}
+    runs-on: ubuntu-latest
+    needs: ["changed-apps", "build"]
+    # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
+    # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
+    if: ${{ !cancelled() }}
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
+      fail-fast: false
+    steps:
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ matrix.app.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
+            type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
+            type=raw,value=rolling
+
+      - name: Extract Tags
+        id: tags
+        run: |-
+          tags=$(echo "${{ steps.meta.outputs.json }}" | jq -r '.tags | join(",")')
+          echo "tags=${tags}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Push Images
+        uses: Noelware/docker-manifest-action@master
+        with:
+          inputs: ${{ steps.tags.outputs.tags }}
+          images: >-
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,
+            ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
+          push: true
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.actor }}/${{ matrix.app.name }}:${{ matrix.app.version }}
