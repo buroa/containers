@@ -167,6 +167,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }}
             type=semver,pattern={{major}},value=${{ matrix.app.version }}
             type=raw,value=${{ matrix.app.version }}
+            type=raw,value=rolling
 
       - name: Merge Manifests
         working-directory: /tmp/${{ matrix.app.name }}
