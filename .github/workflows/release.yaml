@@ -72,16 +72,16 @@ jobs:
             type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
           cache-to: |-
             type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }}
-          context: ./apps/${{ matrix.app.name }}
-          platforms: linux/${{ matrix.platform }}
-          tags: |-
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-${{ matrix.platform }}
           labels: |-
             org.opencontainers.image.title=${{ matrix.app.name }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
             org.opencontainers.image.version=${{ matrix.app.version }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
+          tags: |-
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-${{ matrix.platform }}
+          context: ./apps/${{ matrix.app.name }}
+          platforms: linux/${{ matrix.platform }}
           provenance: false
           push: true
 
@@ -99,22 +99,37 @@ jobs:
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
           registry: ghcr.io
-          username: "${{ github.repository_owner }}"
-          password: "${{ secrets.GITHUB_TOKEN }}"
+          username: "${{ github.actor }}"
+          password: "${{ github.token }}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install Semver
+        run: npm install semver
+
+      - name: Determine Semver Compliance
+        uses: actions/github-script@v7
+        id: semver
+        with:
+          script: |
+            const semver = require('semver')
+            const version = "${{ matrix.app.version }}";
+            return semver.valid(`${version}`))
 
       - name: Build Meta
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
-          tags: |
+          flavor: latest=false
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
+          tags: |-
             type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ matrix.app.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
-            type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ matrix.app.semver }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
+            type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
             type=raw,value=rolling
-          flavor: |
-            latest=false
 
       - name: Push Images
         id: push

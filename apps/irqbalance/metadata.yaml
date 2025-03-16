@@ -2,5 +2,4 @@
 # renovate: datasource=repology depName=alpine_3_21/irqbalance versioning=redhat
 version: 1.9.4-r1
 name: irqbalance
-semver: false
 test: false
