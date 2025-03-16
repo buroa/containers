@@ -38,7 +38,7 @@ jobs:
   build:
     needs: changed
     name: Build ${{ matrix.app.name }}
-    uses: ./.github/workflows/build-image.yaml
+    uses: ./.github/workflows/image-build-action.yaml
     permissions:
       contents: read
       id-token: write
