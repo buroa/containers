@@ -103,7 +103,7 @@ jobs:
     if: ${{ !cancelled() }}
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.build.outputs.apps) }}
+        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
       fail-fast: false
     steps:
       - name: Echo
