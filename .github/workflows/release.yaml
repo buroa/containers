@@ -60,7 +60,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
 
-      - name: Docker Meta
+      - name: Build Meta
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
@@ -79,6 +79,8 @@ jobs:
             VENDOR=${{ github.repository_owner }}
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }}
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
@@ -96,10 +98,14 @@ jobs:
         app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
       fail-fast: false
     steps:
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.repository_owner }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Docker Meta
+      - name: Build Meta
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
@@ -112,13 +118,6 @@ jobs:
             type=raw,value=rolling
           flavor: |
             latest=false
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
-        with:
-          registry: ghcr.io
-          username: "${{ github.repository_owner }}"
-          password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Push Images
         id: push

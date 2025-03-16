@@ -42,12 +42,10 @@ RUN \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/*  /app/bin/Prowlarr.Update
 
-COPY ./entrypoint.sh /entrypoint.sh
-
 USER nobody:nogroup
 WORKDIR /config
 VOLUME ["/config"]
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/bin/Prowlarr", "--nobrowser", "--data=/config"]
 
 LABEL org.opencontainers.image.source="https://github.com/Prowlarr/Prowlarr"
