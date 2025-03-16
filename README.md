@@ -31,11 +31,15 @@ We do take a similar approach but instead of appending a `-ls69` or `-r420` pref
 | Container                                          | Immutable |
 |----------------------------------------------------|-----------|
 | `ghcr.io/buroa/sonarr:rolling`                   | ❌         |
-| `ghcr.io/buroa/sonarr:3.0.8.1507`                | ❌         |
+| `ghcr.io/buroa/sonarr:4.0.13.2932`                | ❌         |
 | `ghcr.io/buroa/sonarr:rolling@sha256:8053...`    | ✅         |
-| `ghcr.io/buroa/sonarr:3.0.8.1507@sha256:8053...` | ✅         |
+| `ghcr.io/buroa/sonarr:4.0.13.2932@sha256:8053...` | ✅         |
 
 _If pinning an image to the sha256 digest, tools like [Renovate](https://github.com/renovatebot/renovate) support updating the container on a digest or application version change._
+
+## Eschewed features
+
+There is no multiple "channels" of the same application. For example Prowlarr, Radarr, and Sonarr will only have the develop branch published and not the master "stable" branch. Qbittorrent will only be published with LibTorrent 2.x.
 
 ## Rootless
 
@@ -50,7 +54,7 @@ networks:
     external: true
 services:
   sonarr:
-    image: ghcr.io/buroa/sonarr:3.0.8.1507
+    image: ghcr.io/buroa/sonarr:4.0.13.2932
     container_name: sonarr
     user: 65534:65534
     # ...
@@ -109,4 +113,4 @@ Containers here can be **deprecated** at any point, this could be for any reason
 
 ## Credits
 
-A lot of inspiration and ideas are thanks to the hard work of [hotio.dev](https://hotio.dev/) and [linuxserver.io](https://www.linuxserver.io/) contributors.
+A lot of inspiration and ideas are thanks to the hard work of the home-ops community, [hotio.dev](https://hotio.dev/) and [linuxserver.io](https://www.linuxserver.io/) contributors.
