@@ -149,8 +149,8 @@ jobs:
       - name: Export Digest
         id: digest
         run: |
-          echo "${{ steps.push.outputs.digest }}"
-          digest=$(echo "${{ steps.push.outputs.digest }}" | cut -d "," -f1 | cut -d "@" -f2)
+          echo "${{ steps.push.outputs.images }}"
+          digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
       - name: Install Cosign
