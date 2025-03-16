@@ -79,7 +79,8 @@ jobs:
             VENDOR=${{ github.repository_owner }}
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:rolling,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }}
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
