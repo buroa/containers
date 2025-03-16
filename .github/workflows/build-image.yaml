@@ -1,0 +1,154 @@
+---
+name: Image Build
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        type: string
+        description: The name of the app to build.
+        required: true
+      version:
+        type: string
+        description: The version of the app to build.
+        required: true
+      test:
+        type: boolean
+        description: Whether to test the app.
+        required: true
+      release:
+        type: boolean
+        description: Whether to release the app.
+        required: true
+
+jobs:
+  build:
+    name: ${{ inputs.test && 'Build/Test' || 'Build' }} ${{ inputs.app }} (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        platform: ["amd64", "arm64"]
+      fail-fast: false
+    outputs:
+      amd64: ${{ steps.digest.outputs.amd64 }}
+      arm64: ${{ steps.digest.outputs.arm64 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.repository_owner }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
+
+      - name: Build Image
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6
+        id: build
+        with:
+          build-args: |-
+            VENDOR=${{ github.repository_owner }}
+            VERSION=${{ inputs.version }}
+            REVISION=${{ github.sha }}
+          cache-from: |-
+            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, matrix.platform) }}
+          cache-to: |-
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', github.repository_owner, inputs.app, matrix.platform) || '' }}
+          labels: |-
+            org.opencontainers.image.title=${{ inputs.app }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+            org.opencontainers.image.version=${{ inputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          outputs: |-
+            ${{ inputs.test && 'type=docker' || '' }}
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
+          context: ./apps/${{ inputs.app }}
+          platforms: linux/${{ matrix.platform }}
+          provenance: false
+
+      - name: Setup Goss
+        if: ${{ inputs.test }}
+        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
+        with:
+          version: latest
+
+      - name: Run Goss Tests
+        if: ${{ inputs.test }}
+        env:
+          CONTAINER_RUNTIME: docker
+          GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
+          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
+          GOSS_SLEEP: 2
+          GOSS_FILES_STRATEGY: cp
+          CONTAINER_LOG_OUTPUT: goss_container_log_output
+        run: dgoss run ${{ steps.build.outputs.imageid }}
+
+      - name: Export Digest
+        id: digest
+        run: |
+          echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  release:
+    if: ${{ inputs.release }}
+    needs: build
+    name: Release ${{ inputs.app }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: "${{ github.actor }}"
+          password: "${{ github.token }}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install Semver
+        run: npm install semver
+
+      - name: Determine Semver Compliance
+        uses: actions/github-script@v7
+        id: semver
+        with:
+          script: |
+            const semver = require('semver')
+            const version = "${{ inputs.version }}";
+            return semver.valid(`${version}`) !== null;
+
+      - name: Build Meta
+        id: meta
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
+        with:
+          flavor: latest=false
+          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+          tags: |-
+            type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ inputs.version }}
+            type=match,pattern=^v?(\d+(\.\d+)),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}
+            type=match,pattern=^v?(\d+),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}
+            type=raw,value=rolling
+
+      - name: Push Images
+        id: push
+        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
+        with:
+          inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
+          images: >-
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${{ needs.build.outputs.amd64 }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${{ needs.build.outputs.arm64 }}
+          push: true
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
+
+      - name: Sign Image
+        run: |
+          digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
+          cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${digest}
