@@ -41,6 +41,7 @@ jobs:
     uses: ./.github/workflows/build-image.yaml
     permissions:
       contents: read
+      id-token: write
       packages: write
     strategy:
       matrix:
