@@ -107,4 +107,5 @@ jobs:
       fail-fast: false
     steps:
       - name: Echo
-        run: echo "${{ needs.build.outputs }}
+        run: |
+          echo "${{ fromJSON(needs.build.outputs) }}"
