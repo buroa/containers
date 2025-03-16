@@ -12,7 +12,7 @@ RUN \
         bash \
         ca-certificates \
         catatonit \
-        postgresql17-client~"${VERSION}"
+        postgresql17-client="${VERSION}"
 
 COPY ./entrypoint.sh /entrypoint.sh
 
