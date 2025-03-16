@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=repology depName=alpine_3_21/irqbalance
+# renovate: depName=alpine_3_21/irqbalance datasource=repology
 version: 1.9.4-r1
 name: irqbalance
 semver: false

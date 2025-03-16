@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=github-releases depName=containernetworking/plugins
+# renovate: depName=containernetworking/plugins datasource=github-releases
 version: v1.6.2
 name: cni-plugins
 semver: true

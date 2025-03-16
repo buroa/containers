@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=custom.sonarr depName=sonarr
+# renovate: depName=sonarr datasource=custom.sonarr versioning=nuget
 version: 4.0.13.2933
 name: sonarr
 semver: false

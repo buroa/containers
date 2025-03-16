@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=docker depName=ghcr.io/actions/actions-runner
+# renovate: depName=ghcr.io/actions/actions-runner datasource=docker
 version: 2.322.0
 name: actions-runner
 semver: true

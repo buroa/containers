@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=github-releases depName=Tautulli/Tautulli
+# renovate: depName=Tautulli/Tautulli datasource=github-releases
 version: 2.15.1
 name: tautulli
 semver: true

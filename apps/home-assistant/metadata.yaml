@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=github-releases depName=home-assistant/core
+# renovate: depName=home-assistant/core datasource=github-releases
 version: 2025.3.3
 name: home-assistant
 semver: true
