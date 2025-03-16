@@ -127,8 +127,8 @@ jobs:
           images: ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
           tags: |-
             type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ matrix.app.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
-            type=semver,pattern={{major}},value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
+            type=match,pattern=^v?(\d+(\.\d+)),value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
+            type=match,pattern=^v?(\d+),value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
             type=raw,value=rolling
 
       - name: Push Images
