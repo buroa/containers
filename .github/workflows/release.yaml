@@ -46,7 +46,7 @@ jobs:
           if [[ "${{ github.event_name }}" != "workflow_dispatch" ]]; then
             apps="${{ steps.changed-files.outputs.all_changed_and_modified_files }}"
           else
-            apps="${{ github.event.inputs.app }}"
+            apps="${{ inputs.app }}"
           fi
           apps=$(printf "%s/metadata.yaml\n" ${apps})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
@@ -68,7 +68,7 @@ jobs:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
       test: ${{ matrix.app.test }}
-      release: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release || github.event_name == 'push' }}
+      release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   status:
     if: ${{ always() }}
