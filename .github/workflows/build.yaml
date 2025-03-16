@@ -70,7 +70,7 @@ jobs:
           outputs: |-
             type=docker
           cache-from: |-
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:rolling,mode=max
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
 
