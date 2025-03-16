@@ -1,5 +1,5 @@
 ---
-# renovate: depName=radarr datasource=custom.servarr versioning=nuget
+# renovate: datasource=custom.servarr depName=radarr versioning=nuget
 version: 5.20.0.9752
 name: radarr
 semver: false

@@ -1,5 +1,5 @@
 ---
-# renovate: depName=sabnzbd/sabnzbd datasource=github-releases
+# renovate: datasource=github-releases depName=sabnzbd/sabnzbd
 version: 4.4.1
 name: sabnzbd
 semver: true

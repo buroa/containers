@@ -1,5 +1,5 @@
 ---
-# renovate: depName=prowlarr datasource=custom.servarr versioning=nuget
+# renovate: datasource=custom.servarr depName=prowlarr versioning=nuget
 version: 1.32.1.4983
 name: prowlarr
 semver: false
