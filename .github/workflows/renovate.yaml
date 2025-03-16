@@ -17,10 +17,12 @@ on:
         default: latest
         required: false
   schedule:
-    - cron: "0 * * * *" # Every hour
+    - cron: "0 * * * *"
   push:
     branches: ["master"]
-    paths: [".github/renovate.json5", ".github/renovate/**.json5"]
+    paths:
+      - .renovaterc.json5
+      - .renovate/**.json5
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -56,6 +58,5 @@ jobs:
       - name: Renovate
         uses: renovatebot/github-action@02f4fdeb479bbb229caa7ad82cb5e691c07e80b3 # v41.0.14
         with:
-          configurationFile: .github/renovate.json5
           token: "${{ steps.app-token.outputs.token }}"
           renovate-version: "${{ env.WORKFLOW_RENOVATE_VERSION }}"
