@@ -107,7 +107,7 @@ jobs:
           password: "${{ github.token }}"
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
         with:
           node-version: 22.x
 
@@ -115,7 +115,7 @@ jobs:
         run: npm install semver
 
       - name: Determine Semver Compliance
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
         id: semver
         with:
           script: |
