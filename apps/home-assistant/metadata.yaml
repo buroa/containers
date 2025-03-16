@@ -4,4 +4,3 @@ version: 2025.3.3
 name: home-assistant
 semver: true
 test: true
-# test cache
