@@ -67,10 +67,10 @@ jobs:
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   status:
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     needs: build
     name: Build Success
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Any jobs failed?
         if: ${{ contains(needs.*.result, 'failure') }}
