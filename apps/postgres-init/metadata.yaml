@@ -1,5 +1,5 @@
 ---
-# renovate: depName=alpine_3_21/postgresql17-client datasource=repology
+# renovate: depName=alpine_3_21/postgresql17-client datasource=repology versioning=redhat
 version: 17.4-r0
 name: postgres-init
 semver: false
