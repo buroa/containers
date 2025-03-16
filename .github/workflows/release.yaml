@@ -31,6 +31,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        name: Override Manual Directories
+        id: manual-dirs
+        run: |
+          apps="${{ inputs.apps }}"
+          if [ "${apps}" = "all" ]; then
+            apps=$(ls -d */ | tr -d '/' | paste -sd ",")
+          fi
+          echo "apps=${apps//,/ }" >> $GITHUB_OUTPUT
+
       - if: ${{ github.event_name != 'workflow_dispatch' }}
         name: Determine Changed Directories
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
@@ -40,22 +50,11 @@ jobs:
           dir_names_max_depth: "1"
           path: apps
 
-      - if: ${{ github.event_name == 'workflow_dispatch' }}
-        name: Manual App Selection
-        id: manual-apps
-        run: |
-          apps="${{ inputs.apps }}"
-          if [ "${apps}" = "all" ]; then
-            apps=$(ls -d */ | tr -d '/' | paste -sd ",")
-          fi
-          apps=${apps//,/ }
-          echo "apps=${apps}" >> $GITHUB_OUTPUT
-
       - name: Extract Metadata
         id: apps
         working-directory: apps
         run: |
-          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-apps.outputs.apps || steps.changed-dirs.outputs.all_changed_and_modified_files }}"
+          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-apps.outputs.apps || && steps.changed-dirs.outputs.all_changed_and_modified_files}}"
           apps=$(printf "%s/metadata.yaml\n" ${apps})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
