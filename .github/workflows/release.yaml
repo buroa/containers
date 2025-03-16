@@ -5,6 +5,9 @@ on:
   push:
     branches: ["master"]
     paths: ["apps/**"]
+  pull_request:
+    branches: ["master"]
+    paths: ["apps/**"]
 
 permissions:
   contents: read
@@ -46,6 +49,9 @@ jobs:
         app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
         platform: ["amd64", "arm64"]
       fail-fast: false
+    outputs:
+      amd64: ${{ steps.digest.outputs.amd64 }}
+      arm64: ${{ steps.digest.outputs.arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -78,12 +84,17 @@ jobs:
             org.opencontainers.image.version=${{ matrix.app.version }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-          tags: |-
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-${{ matrix.platform }}
+          outputs: |-
+            type=image,name=ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }},push-by-digest=true,name-canonical=true,push=true
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           provenance: false
           push: true
+
+      - name: Export Digest
+        id: digest
+        run: |
+          echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
   merge:
     name: Merge ${{ matrix.app.name }}
@@ -92,59 +103,8 @@ jobs:
     if: ${{ !cancelled() }}
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.changed-apps.outputs.apps) }}
+        app: ${{ fromJSON(needs.build.outputs.apps) }}
       fail-fast: false
     steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
-        with:
-          registry: ghcr.io
-          username: "${{ github.actor }}"
-          password: "${{ github.token }}"
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-
-      - name: Install Semver
-        run: npm install semver
-
-      - name: Determine Semver Compliance
-        uses: actions/github-script@v7
-        id: semver
-        with:
-          script: |
-            const semver = require('semver')
-            const version = "${{ matrix.app.version }}";
-            return semver.valid(`${version}`) !== null;
-
-      - name: Build Meta
-        id: meta
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
-        with:
-          flavor: latest=false
-          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
-          tags: |-
-            type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ matrix.app.version }}
-            type=match,pattern=^v?(\d+(\.\d+)),value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
-            type=match,pattern=^v?(\d+),value=${{ matrix.app.version }},enable=${{ steps.semver.outputs.result }}
-            type=raw,value=rolling
-
-      - name: Push Images
-        id: push
-        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
-        with:
-          inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
-          images: >-
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-amd64,
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ github.sha }}-arm64
-          push: true
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
-
-      - name: Sign Image
-        run: |
-          digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
-          cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}@${digest}
+      - name: Echo
+        run: echo "${{ needs.build.outputs }}
