@@ -29,7 +29,7 @@ jobs:
         id: apps
         working-directory: apps
         run: |
-          apps="${{ input.apps }}"
+          apps="${{ inputs.apps }}"
           if [ "${apps}" = "all" ]; then
             apps=$(ls -d */ | tr -d '/' | paste -sd ",")
           fi
