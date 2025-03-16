@@ -1,5 +1,5 @@
 ---
-name: Build Image
+name: Image Build
 
 on:
   workflow_call:
@@ -55,9 +55,9 @@ jobs:
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
           cache-from: |-
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ inputs.app }}-${{ matrix.platform }},mode=max
+            ${{ format(type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, matrix.platform) }}
           cache-to: |-
-            ${{ !inputs.release && 'type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ inputs.app }}-${{ matrix.platform }}' || '' }}
+            ${{ !inputs.release && format(type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', github.repository_owner, inputs.app, matrix.platform) || '' }}
           labels: |-
             org.opencontainers.image.title=${{ inputs.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
@@ -65,7 +65,8 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
           outputs: |-
-            ${{ !inputs.release && 'name=ghcr.io/${{ github.repository_owner }}/${{ inputs.app }},push-by-digest=true,name-canonical=true,push=true' || 'type=docker' }}
+            ${{ inputs.test && 'type=docker' || '' }}
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
           context: ./apps/${{ inputs.app }}
           platforms: linux/${{ matrix.platform }}
           provenance: false
@@ -92,10 +93,10 @@ jobs:
         run: |
           echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
-  merge:
+  release:
     if: ${{ inputs.release }}
     needs: build
-    name: Merge ${{ inputs.app }}
+    name: Release ${{ inputs.app }}
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
