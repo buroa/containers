@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - if: ${{ github.event_name != 'workflow_dispatch' }}
-        name: Determine Changed Directories
+        name: Get Changed Directories
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
         id: changed-dirs
         with:
@@ -44,7 +44,7 @@ jobs:
         working-directory: apps
         run: |
           if [[ "${{ github.event_name }}" != "workflow_dispatch" ]]; then
-            apps="${{ steps.changed-files.outputs.all_changed_and_modified_files }}"
+            apps="${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}"
           else
             apps="${{ inputs.app }}"
           fi
