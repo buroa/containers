@@ -148,7 +148,3 @@ jobs:
         run: |
           digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
           cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}@${digest}
-
-      - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}:${{ matrix.app.version }}
