@@ -1,0 +1,5 @@
+---
+# renovate: datasource=custom.jbops depName=jbops
+version: 2023.11.25
+name: jbops
+test: false

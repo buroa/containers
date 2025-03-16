@@ -1,15 +1,20 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   customDatasources: {
-    "sonarr": {
-      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/download/develop?version=4.0",
+    "jbops": {
+      defaultRegistryUrlTemplate: "https://api.github.com/repos/blacktwin/JBOPS/commits?sha=master",
       format: "json",
-      transformTemplates: ['{"releases":[{"version": version}]}'],
+      transformTemplates: ['{"releases":[{"version": $fromMillis($toMillis(commit[0].author.date), "[Y].[M].[D]")}]}'],
     },
     "servarr": {
       defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
+    },
+    "sonarr": {
+      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/download/develop?version=4.0",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": version}]}'],
     },
     "plex": {
       defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
