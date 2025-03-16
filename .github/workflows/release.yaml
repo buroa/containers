@@ -117,7 +117,7 @@ jobs:
           script: |
             const semver = require('semver')
             const version = "${{ matrix.app.version }}";
-            return semver.valid(`${version}`)
+            return semver.valid(`${version}`) == true;
 
       - name: Build Meta
         id: meta
