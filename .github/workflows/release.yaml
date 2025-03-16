@@ -41,21 +41,22 @@ jobs:
           path: apps
 
       - if: ${{ github.event_name == 'workflow_dispatch' }}
-        name: Force Changed Directories
-        id: changed-dirs
+        name: Manual App Selection
+        id: manual-apps
         run: |
           apps="${{ inputs.apps }}"
           if [ "${apps}" = "all" ]; then
             apps=$(ls -d */ | tr -d '/' | paste -sd ",")
           fi
           apps=${apps//,/ }
-          echo "all_changed_and_modified_files=${apps}" >> $GITHUB_OUTPUT
+          echo "apps=${apps}" >> $GITHUB_OUTPUT
 
       - name: Extract Metadata
         id: apps
         working-directory: apps
         run: |
-          apps=$(printf "%s/metadata.yaml\n" ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }})
+          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-apps.outputs.apps || steps.changed-dirs.outputs.all_changed_and_modified_files }}"
+          apps=$(printf "%s/metadata.yaml\n" ${apps})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
 
@@ -75,7 +76,7 @@ jobs:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
       test: ${{ matrix.app.test }}
-      release: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' && inputs.release }}
+      release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   status:
     needs: build
