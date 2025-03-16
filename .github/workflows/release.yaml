@@ -2,6 +2,18 @@
 name: Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      apps:
+        type: string
+        description: The name of the apps to build
+        required: false
+        default: all
+      release:
+        type: boolean
+        description: Whether to release the apps
+        required: false
+        default: false
   pull_request:
     branches: ["master"]
     paths: ["apps/**"]
@@ -19,13 +31,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - name: Determine Changed Directories
+      - if: ${{ github.event_name != 'workflow_dispatch' }}
+        name: Determine Changed Directories
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
         id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
           path: apps
+
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        name: Force Changed Directories
+        id: changed-dirs
+        run: |
+          apps="${{ inputs.apps }}"
+          if [ "${apps}" = "all" ]; then
+            apps=$(ls -d */ | tr -d '/' | paste -sd ",")
+          fi
+          apps=${apps//,/ }
+          echo "all_changed_and_modified_files=${apps}" >> $GITHUB_OUTPUT
 
       - name: Extract Metadata
         id: apps
@@ -51,7 +75,7 @@ jobs:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
       test: ${{ matrix.app.test }}
-      release: ${{ github.event_name == 'push' }}
+      release: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' && inputs.release }}
 
   status:
     needs: build
