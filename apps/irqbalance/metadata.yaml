@@ -1,5 +1,5 @@
 ---
-# renovate: datasource=repology depName=alpine_3_21/irqbalance versioning=redhat
+# renovate: datasource=repology depName=alpine_3_21/irqbalance versioning=loose
 version: 1.9.4-r1
 name: irqbalance
 test: false
