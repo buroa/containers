@@ -81,7 +81,7 @@ jobs:
         if: ${{ inputs.test }}
         env:
           CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ matrix.app.name }}/ci/goss.yaml
+          GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
