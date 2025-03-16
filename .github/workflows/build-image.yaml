@@ -141,8 +141,8 @@ jobs:
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           images: >-
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${{ needs.build.outputs.amd64 }}
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${{ needs.build.outputs.arm64 }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
 
       - name: Install Cosign
