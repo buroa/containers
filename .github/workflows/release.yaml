@@ -54,7 +54,7 @@ jobs:
         id: apps
         working-directory: apps
         run: |
-          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-apps.outputs.apps || && steps.changed-dirs.outputs.all_changed_and_modified_files}}"
+          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-dirs.outputs.apps || && steps.changed-dirs.outputs.all_changed_and_modified_files }}"
           apps=$(printf "%s/metadata.yaml\n" ${apps})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
