@@ -69,7 +69,8 @@ jobs:
             REVISION=${{ github.sha }}
           outputs: |-
             type=docker
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
+          cache-from: |-
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
 

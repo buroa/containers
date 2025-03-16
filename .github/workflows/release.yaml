@@ -70,6 +70,12 @@ jobs:
             type=raw,value=${{ github.sha }}-${{ matrix.platform }}
           flavor: |
             latest=false
+          labels: |
+            org.opencontainers.image.title=${{ matrix.app.name }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ matrix.app.name }}
+            org.opencontainers.image.version=${{ matrix.app.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
 
       - name: Build Image
         uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6
@@ -79,8 +85,10 @@ jobs:
             VENDOR=${{ github.repository_owner }}
             VERSION=${{ matrix.app.version }}
             REVISION=${{ github.sha }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }}
+          cache-from: |-
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }},mode=max
+          cache-to: |-
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.app.name }}-${{ matrix.platform }}
           context: ./apps/${{ matrix.app.name }}
           platforms: linux/${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
