@@ -71,14 +71,14 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - name: Setup Goss
-        if: ${{ inputs.test }}
+      - if: ${{ inputs.test }}
+        name: Setup Goss
         uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
         with:
           version: latest
 
-      - name: Run Goss Tests
-        if: ${{ inputs.test }}
+      - if: ${{ inputs.test }}
+        name: Run Goss Tests
         env:
           CONTAINER_RUNTIME: docker
           GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
@@ -88,7 +88,8 @@ jobs:
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: dgoss run ${{ steps.build.outputs.imageid }}
 
-      - name: Export Digest
+      - if: ${{ inputs.release }}
+        name: Export Digest
         id: digest
         run: |
           echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
@@ -145,10 +146,15 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
 
+      - name: Export Digest
+        id: digest
+        run: |
+          echo "${{ steps.push.outputs.digest }}"
+          digest=$(echo "${{ steps.push.outputs.digest }}" | cut -d "," -f1 | cut -d "@" -f2)
+          echo "digest=${digest}" >> $GITHUB_OUTPUT
+
       - name: Install Cosign
         uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
 
       - name: Sign Image
-        run: |
-          digest=$(echo "${{ steps.push.outputs.images }}" | cut -d "," -f1 | cut -d "@" -f2)
-          cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${digest}
+        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
