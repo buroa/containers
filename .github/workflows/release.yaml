@@ -4,14 +4,13 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      apps:
+      app:
         type: string
-        description: The name of the apps to build
-        required: false
-        default: all
+        description: The name of the app to build
+        required: true
       release:
         type: boolean
-        description: Whether to release the apps
+        description: Whether to release the app
         required: false
         default: false
   pull_request:
@@ -31,16 +30,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - if: ${{ github.event_name == 'workflow_dispatch' }}
-        name: Override Manual Directories
-        id: manual-dirs
-        run: |
-          apps="${{ inputs.apps }}"
-          if [ "${apps}" = "all" ]; then
-            apps=$(ls -d */ | tr -d '/' | paste -sd ",")
-          fi
-          echo "apps=${apps//,/ }" >> $GITHUB_OUTPUT
-
       - if: ${{ github.event_name != 'workflow_dispatch' }}
         name: Determine Changed Directories
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
@@ -54,7 +43,7 @@ jobs:
         id: apps
         working-directory: apps
         run: |
-          apps="${{ github.event_name == 'workflow_dispatch' && steps.manual-dirs.outputs.apps || && steps.changed-dirs.outputs.all_changed_and_modified_files }}"
+          apps="${{ github.event_name == 'workflow_dispatch' && inputs.app || steps.changed-dirs.outputs.all_changed_and_modified_files }}"
           apps=$(printf "%s/metadata.yaml\n" ${apps})
           apps=$(yq eval-all --indent=0 --output-format=json "[.]" ${apps})
           echo "apps=${apps}" >> $GITHUB_OUTPUT
