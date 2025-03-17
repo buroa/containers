@@ -39,7 +39,7 @@ jobs:
           path: apps
 
   changed:
-    if: ${{ needs.pre-job.outputs.any_changed == 'true' }}
+    if: ${{ needs.pre-job.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch' }}
     needs: pre-job
     name: Get Changed Apps
     runs-on: ubuntu-latest
