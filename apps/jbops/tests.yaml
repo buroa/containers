@@ -1,0 +1,6 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: plexapi_haiku
+    path: /app/fun/plexapi_haiku.py
+    shouldExist: true
