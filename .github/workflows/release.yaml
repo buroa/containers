@@ -84,8 +84,8 @@ jobs:
             core.summary.addHeading('Apps to build:').addList(appsToBuild).write()
 
   build:
-    needs: changed
     if: ${{ needs.changed.outputs.apps != '[]' }}
+    needs: changed
     name: Build ${{ matrix.app.name }}
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
