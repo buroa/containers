@@ -28,10 +28,10 @@ jobs:
       apps: ${{ steps.apps.outputs.apps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - if: ${{ github.event_name != 'workflow_dispatch' }}
-        name: Get Changed Directories
+        name: Determine Changed Directories
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
         id: changed-dirs
         with:
