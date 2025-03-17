@@ -18,3 +18,10 @@ file:
     exists: true
   /usr/local/bin/par2create:
     exists: true
+    filetype: symlink
+  /usr/local/bin/par2repair:
+    exists: true
+    filetype: symlink
+  /usr/local/bin/par2verify:
+    exists: true
+    filetype: symlink

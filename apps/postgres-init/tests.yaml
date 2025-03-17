@@ -1,0 +1,6 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: psql
+    path: /usr/libexec/postgresql17/psql
+    shouldExist: true

@@ -1,0 +1,6 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: macvlan
+    path: /plugins/macvlan
+    shouldExist: true

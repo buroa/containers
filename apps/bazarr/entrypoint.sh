@@ -4,7 +4,7 @@
 exec \
     /usr/local/bin/python \
         /app/bin/bazarr.py \
-            --no-update \
+            --no-update True \
             --config /config \
             --port ${BAZARR__PORT} \
             "$@"

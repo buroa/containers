@@ -2,4 +2,3 @@
 # renovate: datasource=docker depName=ghcr.io/actions/actions-runner
 version: 2.322.0
 name: actions-runner
-test: false

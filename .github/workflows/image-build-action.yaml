@@ -12,10 +12,6 @@ on:
         type: string
         description: The version of the app to build
         required: true
-      test:
-        type: boolean
-        description: Whether to test the app
-        required: true
       release:
         type: boolean
         description: Whether to release the app
@@ -23,7 +19,7 @@ on:
 
 jobs:
   build:
-    name: ${{ inputs.test && 'Build/Test' || 'Build' }} ${{ inputs.app }} (${{ matrix.platform }})
+    name: Build ${{ inputs.app }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
@@ -50,38 +46,53 @@ jobs:
         uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6
         id: build
         with:
-          build-args: |-
+          build-args: |
             VENDOR=${{ github.repository_owner }}
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
-          cache-from: |-
+          cache-from: |
             ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, matrix.platform) }}
-          cache-to: |-
+          cache-to: |
             ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', github.repository_owner, inputs.app, matrix.platform) || '' }}
-          labels: |-
+          labels: |
             org.opencontainers.image.title=${{ inputs.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
             org.opencontainers.image.version=${{ inputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-          outputs: |-
-            ${{ inputs.test && 'type=docker' || '' }}
+          outputs: |
+            type=docker
             ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
           context: ./apps/${{ inputs.app }}
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - if: ${{ inputs.test }}
-        name: Setup Goss
+      - name: Determine Testing Tool
+        id: test
+        run: |
+          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              echo "tool=goss" >> $GITHUB_OUTPUT
+          else
+              echo "tool=cst" >> $GITHUB_OUTPUT
+          fi
+
+      - if: ${{ steps.test.outputs.tool == 'cst' }}
+        name: Run container-structure-test
+        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
+        with:
+          args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
+
+      - if: ${{ steps.test.outputs.tool == 'goss' }}
+        name: Setup goss
         uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
         with:
           version: latest
 
-      - if: ${{ inputs.test }}
-        name: Run Goss Tests
+      - if: ${{ steps.test.outputs.tool == 'goss' }}
+        name: Run goss
         env:
           CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
+          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
@@ -108,7 +119,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Setup Node
-        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
         with:
           node-version: 22.x
 
@@ -130,7 +141,7 @@ jobs:
         with:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
-          tags: |-
+          tags: |
             type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ inputs.version }}
             type=match,pattern=^v?(\d+(\.\d+)),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}
             type=match,pattern=^v?(\d+),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}

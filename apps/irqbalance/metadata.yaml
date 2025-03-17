@@ -2,4 +2,3 @@
 # renovate: datasource=repology depName=alpine_3_21/irqbalance
 version: 1.9.4-r1
 name: irqbalance
-test: false

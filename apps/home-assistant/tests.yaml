@@ -1,7 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
-  hass:
+  python3:
     running: true
 file:
   /usr/local/bin/hass:

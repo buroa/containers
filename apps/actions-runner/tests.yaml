@@ -1,0 +1,6 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: yq
+    path: /usr/local/bin/yq
+    shouldExist: true

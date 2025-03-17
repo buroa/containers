@@ -2,7 +2,6 @@ FROM docker.io/library/python:3.13.2-alpine
 
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -28,6 +27,7 @@ RUN \
         bash \
         ca-certificates \
         catatonit \
+        coreutils \
         curl \
         jo \
         jq \
@@ -47,7 +47,7 @@ RUN \
     && curl -fsSL "https://github.com/Tautulli/Tautulli/archive/v${VERSION}.tar.gz" \
         | tar xzf - -C /app --strip-components 1 \
     && echo "v${VERSION}" > /app/version.txt \
-    && echo "${CHANNEL}" > /app/branch.txt \
+    && echo "master" > /app/branch.txt \
     && chown -R root:root /app && chmod -R 755 /app \
     && pip uninstall --yes uv && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*

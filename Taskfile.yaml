@@ -1,0 +1,19 @@
+---
+version: '3'
+
+set: [pipefail]
+shopt: [globstar]
+
+tasks:
+
+  default:
+    cmd: task --list
+    silent: true
+
+  publish:
+    desc: Publish an app [APP=required]
+    cmd: gh workflow run release.yaml -f app={{.APP}} -f release=true
+    preconditions:
+      - gh auth status
+      - test -f {{.ROOT_DIR}}/.github/workflows/renovate.yaml
+      - which gh

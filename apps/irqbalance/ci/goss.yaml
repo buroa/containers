@@ -1,8 +1,0 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-process:
-  irqbalance:
-    running: true
-file:
-  /usr/sbin/irqbalance:
-    exists: true

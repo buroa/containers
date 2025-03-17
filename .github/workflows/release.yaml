@@ -67,7 +67,6 @@ jobs:
     with:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
-      test: ${{ matrix.app.test }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   status:
