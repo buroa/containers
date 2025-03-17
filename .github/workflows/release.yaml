@@ -31,8 +31,8 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Get Changed Files
-        id: changed-dirs
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
+        id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
@@ -56,42 +56,38 @@ jobs:
         run: npm install yaml
 
       - name: Extract Metadata
-        id: apps
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: apps
         with:
           script: |
             const fs = require('fs');
             const yaml = require('yaml');
             const cwd = process.cwd();
 
-            let input = '';
-            if (context.eventName == 'workflow_dispatch') {
-              input = '${{ inputs.app }}';
-            } else {
-              input = '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
-            }
+            let input =
+              context.eventName === 'workflow_dispatch'
+                ? '${{ inputs.app }}'
+                : '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
 
-            appsToBuild = input.split(' ').filter((v) => v !== '');
+            const appsToBuild = input.split(' ').filter(Boolean);
+            const output = [];
 
-            let output = [];
-            appsToBuild.forEach(function(app) {
+            appsToBuild.forEach((app) => {
               const metadataPath = `${cwd}/apps/${app}/metadata.yaml`;
+
               if (!fs.existsSync(metadataPath)) {
                 core.setFailed(`App ${app} does not have a metadata.yaml`);
                 process.exit(1);
               }
 
-              metadataContent = fs.readFileSync(metadataPath, {encoding: "utf8"});
-              metadata = yaml.parse(metadataContent);
-
+              const metadataContent = fs.readFileSync(metadataPath, 'utf8');
+              const metadata = yaml.parse(metadataContent);
               output.push(metadata);
             });
 
             core.setOutput('apps', output);
-
-            console.log('apps:');
-            console.log(JSON.stringify(output, null, 2));
-            core.summary.addHeading('Apps to build:').addList(appsToBuild).write()
+            console.log('apps:', JSON.stringify(output, null, 2));
+            core.summary.addHeading('Apps to build:').addList(appsToBuild).write();
 
   build:
     if: ${{ needs.changed.outputs.apps != '[]' }}
