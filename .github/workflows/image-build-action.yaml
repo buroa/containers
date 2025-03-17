@@ -80,7 +80,7 @@ jobs:
         name: Run container-structure-test
         uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
         with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
+          args: test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
 
       - if: ${{ steps.test.outputs.tool == 'goss' }}
         name: Setup goss
@@ -97,7 +97,8 @@ jobs:
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: dgoss run ${{ steps.build.outputs.imageid }}
+        run: |
+          dgoss run ${{ steps.build.outputs.imageid }}
 
       - if: ${{ inputs.release }}
         name: Export Digest
