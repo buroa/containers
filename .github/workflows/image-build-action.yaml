@@ -137,8 +137,8 @@ jobs:
             return semver.valid(`${version}`) !== null;
 
       - name: Build Meta
-        id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        id: meta
         with:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
@@ -149,8 +149,8 @@ jobs:
             type=raw,value=rolling
 
       - name: Push Images
-        id: push
         uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
+        id: push
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           images: >-
