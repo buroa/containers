@@ -1,0 +1,9 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: manager
+    path: /manager
+    shouldExist: true
+  - name: restic
+    path: /usr/local/bin/restic
+    shouldExist: true
