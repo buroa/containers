@@ -39,7 +39,7 @@ _If pinning an image to the sha256 digest, tools like [Renovate](https://github.
 
 ## Eschewed features
 
-There is no multiple "channels" of the same application. For example Prowlarr, Radarr, and Sonarr will only have the develop branch published and not the master "stable" branch. Qbittorrent will only be published with LibTorrent 2.x.
+There is no multiple "channels" of the same application. For example Prowlarr, Radarr, Lidarr, and Sonarr will only have the develop branch published and not the master "stable" branch. Qbittorrent will only be published with LibTorrent 2.x.
 
 ## Rootless
 
