@@ -63,41 +63,14 @@ jobs:
           outputs: |
             type=docker
             ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
-          context: ./apps/${{ inputs.app }}
+          context: /github/workspace/apps/${{ inputs.app }}
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - name: Determine Testing Tool
-        id: test
-        run: |
-          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          else
-              echo "tool=cst" >> $GITHUB_OUTPUT
-          fi
-
-      - if: ${{ steps.test.outputs.tool == 'cst' }}
-        name: Run container-structure-test
+      - name: Run container-structure-test
         uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
         with:
           args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Setup goss
-        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
-        with:
-          version: latest
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Run goss
-        env:
-          CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
-          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
-          GOSS_SLEEP: 2
-          GOSS_FILES_STRATEGY: cp
-          CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: dgoss run ${{ steps.build.outputs.imageid }}
 
       - if: ${{ inputs.release }}
         name: Export Digest

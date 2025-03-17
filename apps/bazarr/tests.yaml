@@ -1,16 +1,14 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-process:
-  python:
-    running: true
-port:
-  tcp:6767:
-    listening: true
-http:
-  http://localhost:6767:
-    status: 200
-file:
-  /usr/local/bin/python:
-    exists: true
-  /usr/bin/unrar:
-    exists: true
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: python
+    path: /usr/local/bin/python
+    shouldExist: true
+  - name: unrar
+    path: /usr/bin/unrar
+    shouldExist: true
+commandTests:
+  - name: bazarr
+    setup: /entrypoint.sh
+    expectedOutput:
+      - .*Bazarr starting child process.*
