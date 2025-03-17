@@ -9,6 +9,6 @@ fileExistenceTests:
     shouldExist: true
 commandTests:
   - name: bazarr
-    setup: [["bash", "/entrypoint.sh"]]
-    expectedOutput:
-      - .*Bazarr starting child process.*
+    setup: [["/entrypoint.sh"]]
+    command: "curl"
+    args: ["-s", "http://localhost:6767"]
