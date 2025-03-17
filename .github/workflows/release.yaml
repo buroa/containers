@@ -3,10 +3,10 @@ name: Release
 
 on:
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
     paths: ["apps/**"]
   push:
-    branches: ["master"]
+    branches: ["main"]
     paths: ["apps/**"]
   workflow_dispatch:
     inputs:
