@@ -9,7 +9,6 @@ fileExistenceTests:
     shouldExist: true
 commandTests:
   - name: bazarr
-    setup: 
-      - /entrypoint.sh
+    setup: [[/entrypoint.sh]]
     expectedOutput:
       - .*Bazarr starting child process.*
