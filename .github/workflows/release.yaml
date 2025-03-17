@@ -4,7 +4,6 @@ name: Release
 on:
   pull_request:
     branches: ["main"]
-    paths: ["apps/**"]
   push:
     branches: ["main"]
     paths: ["apps/**"]
@@ -21,7 +20,27 @@ on:
         default: false
 
 jobs:
+  pre-job:
+    name: Pre-Job
+    runs-on: ubuntu-latest
+    outputs:
+      any_changed: ${{ steps.changed-dirs.outputs.any_changed }}
+      all_changed_and_modified_files: ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Get Changed Files
+        id: changed-dirs
+        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
+        with:
+          dir_names: true
+          dir_names_max_depth: "1"
+          path: apps
+
   changed:
+    if: ${{ needs.pre-job.outputs.any_changed == 'true' }}
+    needs: pre-job
     name: Get Changed Apps
     runs-on: ubuntu-latest
     outputs:
@@ -29,15 +48,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - if: ${{ github.event_name != 'workflow_dispatch' }}
-        name: Determine Changed Directories
-        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
-        id: changed-dirs
-        with:
-          dir_names: true
-          dir_names_max_depth: "1"
-          path: apps
 
       - name: Setup Node
         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
@@ -58,7 +68,7 @@ jobs:
             if (context.eventName == 'workflow_dispatch') {
               input = '${{ inputs.app }}';
             } else {
-              input = '${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}';
+              input = '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
             }
 
             appsToBuild = input.split(' ').filter((v) => v !== '');
