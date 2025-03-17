@@ -1,6 +1,7 @@
 ---
-schemaVersion: "2.0.0"
-fileExistenceTests:
-  - name: irqbalance
-    path: /usr/sbin/irqbalance
-    shouldExist: true
+process:
+  irqbalance:
+    running: true
+file:
+  /usr/sbin/irqbalance:
+    exists: true
