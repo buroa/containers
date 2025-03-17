@@ -8,13 +8,13 @@ _An opinionated collection of container images_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/buroa/containers?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/buroa/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/buroa/containers/release.yaml?style=for-the-badge&label=Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/home-operations/containers?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/home-operations/containers?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/home-operations/containers/release.yaml?style=for-the-badge&label=Release)
 
 </div>
 
-Welcome to my container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/buroa?tab=packages&repo_name=containers).
+Welcome to our container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/home-operations?tab=packages&repo_name=containers).
 
 ## Mission statement
 
@@ -30,10 +30,10 @@ We do take a similar approach but instead of appending a `-ls69` or `-r420` pref
 
 | Container                                          | Immutable |
 |----------------------------------------------------|-----------|
-| `ghcr.io/buroa/sonarr:rolling`                   | ❌         |
-| `ghcr.io/buroa/sonarr:4.0.13.2932`                | ❌         |
-| `ghcr.io/buroa/sonarr:rolling@sha256:8053...`    | ✅         |
-| `ghcr.io/buroa/sonarr:4.0.13.2932@sha256:8053...` | ✅         |
+| `ghcr.io/home-operations/sonarr:rolling`                   | ❌         |
+| `ghcr.io/home-operations/sonarr:4.0.13.2932`                | ❌         |
+| `ghcr.io/home-operations/sonarr:rolling@sha256:8053...`    | ✅         |
+| `ghcr.io/home-operations/sonarr:4.0.13.2932@sha256:8053...` | ✅         |
 
 _If pinning an image to the sha256 digest, tools like [Renovate](https://github.com/renovatebot/renovate) support updating the container on a digest or application version change._
 
@@ -54,7 +54,7 @@ networks:
     external: true
 services:
   sonarr:
-    image: ghcr.io/buroa/sonarr:4.0.13.2932
+    image: ghcr.io/home-operations/sonarr:4.0.13.2932
     container_name: sonarr
     user: 65534:65534
     # ...
