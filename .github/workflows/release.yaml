@@ -62,7 +62,6 @@ jobs:
           script: |
             const fs = require('fs');
             const yaml = require('yaml');
-            const core = require('@actions/core');
             const cwd = process.cwd();
 
             let input =
