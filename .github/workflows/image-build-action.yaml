@@ -132,7 +132,7 @@ jobs:
       - name: Install Semver
         run: npm install semver
 
-      - name: Determine definitive version
+      - name: Determine Definitive Version
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: version
         with:
@@ -192,5 +192,5 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
 
-      - name: Sign Image
+      - name: Sign Digest
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
