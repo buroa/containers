@@ -252,13 +252,12 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
   notify:
-    if: ${{ !cancelled() }}
+    if: ${{ contains(needs.*.result, 'failure')  }}
     needs: release
-    name: Discord Notification
+    name: Notify
     runs-on: ubuntu-latest
     steps:
-      - if: ${{ contains(needs.*.result, 'failure') }}
-        name: Send Discord Webhook
+      - name: Send Discord Webhook
         uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
         with:
           color: "0xFF0000"
