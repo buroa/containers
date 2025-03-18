@@ -96,6 +96,7 @@ jobs:
     name: Build ${{ matrix.app.name }}
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
+      attestations: write
       contents: read
       id-token: write
       packages: write
