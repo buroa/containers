@@ -133,24 +133,34 @@ jobs:
         id: version
         with:
           script: |
+            function sanitizeInputVersion(version) {
+                // Remove any pre-release suffixes
+                const output = version.split('-')[0];
+                return output;
+            }
+
             const semver = require('semver');
-            const version = "${{ inputs.version }}";
             const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
             const date = new Date();
-
             const parsedVersion = validSemverRegex.exec(version);
             const validSemver = parsedVersion != null;
+
             const parsedSemver =
                 validSemver
-                ? semver.parse(parsedVersion[0])
+                ? semver.coerce(parsedVersion[0])
                 : null;
             const outputVersion =
                 validSemver
                 ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
                 : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+            const sanitizedInputVersion =
+                validSemver
+                ? `${sanitizeInputVersion(version)}`
+                : version
 
             core.setOutput('version', outputVersion);
             core.setOutput('validSemver', validSemver);
+            core.setOutput('sanitizedInputVersion', validSemver);
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -162,8 +172,10 @@ jobs:
             type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
-            type=raw,value=${{ inputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=raw,value=${{ steps.version.outputs.sanitizedInputVersion }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=rolling
+          labels: |
+            org.opencontainers.image.version=${{ steps.version.outputs.sanitizedInputVersion }}
 
       - name: Push Images
         uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
