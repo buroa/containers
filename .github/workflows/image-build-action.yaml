@@ -71,10 +71,10 @@ jobs:
       - name: Determine Testing Tool
         id: test
         run: |
-          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          else
+          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=cst" >> $GITHUB_OUTPUT
+          else
+              echo "tool=goss" >> $GITHUB_OUTPUT
           fi
 
       - if: ${{ steps.test.outputs.tool == 'cst' }}
