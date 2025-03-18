@@ -194,3 +194,16 @@ jobs:
 
       - name: Sign Digest
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
+
+      - if: ${{ !cancelled() && contains(steps.*.outcome, 'failure') }}
+        name: Send Discord Webhook
+        uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
+        with:
+          color: "0xFF0000"
+          description: |
+            Version `${{ steps.version.outputs.version }}`
+            Click [here](https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml) rebuild the image.
+          nodetail: true
+          title: "Container `ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}` build failed"
+          username: GitHub Actions
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
