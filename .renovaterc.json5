@@ -21,9 +21,9 @@
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
     sonarr: {
-      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/download/develop?version=4.0",
+      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/update/develop/changes?os=linux&runtime=netcore&version=4.0",
       format: "json",
-      transformTemplates: ['{"releases":[{"version": version}]}'],
+      transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
     plex: {
       defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
