@@ -202,6 +202,13 @@ jobs:
           format: cyclonedx-json
           output-file: sbom.cyclonedx.json
 
+      - name: Scan SBOM
+        uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
+        id: scan
+        with:
+          sbom: sbom.cyclonedx.json
+          fail-build: false
+
       - name: Attest
         uses: actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68 # v2.2.0
         id: attest
@@ -211,14 +218,7 @@ jobs:
           sbom-path: sbom.cyclonedx.json
           push-to-registry: true
 
-      - name: Scan image
-        uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
-        id: scan
-        with:
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
-          fail-build: false
-
-      - name: Upload Anchore scan SARIF report
+      - name: Upload SARIF report
         uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.11
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
