@@ -172,8 +172,6 @@ jobs:
             type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=${{ steps.version.outputs.sanitizedInputVersion }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=rolling
-          labels: |
-            org.opencontainers.image.version=${{ steps.version.outputs.sanitizedInputVersion }}
 
       - name: Push Images
         uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
