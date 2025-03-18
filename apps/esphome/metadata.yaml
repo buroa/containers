@@ -1,0 +1,4 @@
+---
+# renovate: depName=esphome/esphome
+version: 2025.2.2
+name: esphome
