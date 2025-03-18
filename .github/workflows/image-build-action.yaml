@@ -219,27 +219,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Generate SBOM
-        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
-        with:
-          format: cyclonedx-json
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
-          output-file: sbom.cyclonedx.json
-
       - name: Scan SBOM
         uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
         id: scan
         with:
           cache-db: true
           fail-build: false
-          sbom: sbom.cyclonedx.json
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          output-file: ${{ inputs.app }}.sbom.json
 
       - name: Attest
         uses: actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68 # v2.2.0
         id: attest
         with:
           push-to-registry: true
-          sbom-path: sbom.cyclonedx.json
+          sbom-path: ${{ steps.scan.outputs.sarif }}
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           subject-digest: ${{ needs.release.outputs.digest }}
 
