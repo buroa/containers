@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+process:
+  esphome:
+    running: true
+port:
+  tcp:6052:
+    listening: true
+http:
+  http://localhost:6052:
+    status: 200
