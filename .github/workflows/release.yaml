@@ -101,6 +101,7 @@ jobs:
       id-token: write
       packages: write
       security-events: write
+    secrets: inherit
     strategy:
       matrix:
         app: ${{ fromJSON(needs.changed.outputs.apps) }}
