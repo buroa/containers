@@ -7,7 +7,7 @@ ARG VERSION
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
-ENV COMPlus_EnableDiagnostics=0 \
+ENV DOTNET_EnableDiagnostics=0 \
     LIDARR__UPDATE__BRANCH=develop
 
 USER root
