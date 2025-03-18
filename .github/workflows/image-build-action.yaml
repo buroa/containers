@@ -146,9 +146,9 @@ jobs:
             const semver = require('semver');
             const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
             const date = new Date();
+            const version = "${{ inputs.version }}";
             const parsedVersion = validSemverRegex.exec(version);
             const validSemver = parsedVersion != null;
-            const version = "${{ inputs.version }}";
 
             const parsedSemver =
                 validSemver
