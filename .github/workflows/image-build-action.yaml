@@ -265,9 +265,9 @@ jobs:
           description: |
             Application: `${{ inputs.app }}`
             Version: `${{ inputs.version }}`
-            [Rebuild](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml)
+            [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
           title: Container build failed
           username: GitHub Actions
-          url: ${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
