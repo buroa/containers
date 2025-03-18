@@ -201,7 +201,7 @@ jobs:
         with:
           color: "0xFF0000"
           description: |
-            Container: `${{ inputs.app }}`
+            Application: `${{ inputs.app }}`
             Version: `${{ steps.version.outputs.version }}`
             [View Logs](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) | [Rebuild](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
