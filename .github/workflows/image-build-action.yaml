@@ -264,9 +264,10 @@ jobs:
           color: "0xFF0000"
           description: |
             Application: `${{ inputs.app }}`
-            Version: `${{ steps.version.outputs.version }}`
-            [View Logs](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) | [Rebuild](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml)
+            Version: `${{ inputs.version }}`
+            [Rebuild](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
           title: Container build failed
           username: GitHub Actions
+          url: ${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
