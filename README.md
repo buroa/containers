@@ -14,7 +14,7 @@ _An opinionated collection of container images_
 
 </div>
 
-Welcome to our container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/orgs/home-operations/packages).
+Welcome to our container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/orgs/home-operations/packages?repo_name=containers).
 
 ## Mission statement
 
@@ -39,7 +39,7 @@ _If pinning an image to the sha256 digest, tools like [Renovate](https://github.
 
 ## Eschewed features
 
-There is no multiple "channels" of the same application. For example Prowlarr, Radarr, and Sonarr will only have the develop branch published and not the master "stable" branch. Qbittorrent will only be published with LibTorrent 2.x.
+There is no multiple "channels" of the same application. For example Prowlarr, Radarr, Lidarr, and Sonarr will only have the develop branch published and not the master "stable" branch. Qbittorrent will only be published with LibTorrent 2.x.
 
 ## Rootless
 
