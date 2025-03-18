@@ -97,9 +97,10 @@ jobs:
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
       attestations: write
-      contents: write
+      contents: read
       id-token: write
       packages: write
+      security-events: write
     strategy:
       matrix:
         app: ${{ fromJSON(needs.changed.outputs.apps) }}
