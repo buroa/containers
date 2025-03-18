@@ -137,35 +137,28 @@ jobs:
         id: version
         with:
           script: |
+            const semver = require('semver');
+
             function sanitizeInputVersion(version) {
-                // Remove any pre-release suffixes
-                const output = version.split('-')[0];
-                return output;
+                return version.split('-')[0]; // Remove any pre-release suffixes
             }
 
-            const semver = require('semver');
-            const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
+            const version = '${{ inputs.version }}';
+            const validSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
             const date = new Date();
-            const version = "${{ inputs.version }}";
             const parsedVersion = validSemverRegex.exec(version);
-            const validSemver = parsedVersion != null;
+            const validSemver = parsedVersion !== null;
 
-            const parsedSemver =
-                validSemver
-                ? semver.coerce(parsedVersion[0])
-                : null;
-            const outputVersion =
-                validSemver
+            const parsedSemver = validSemver ? semver.coerce(parsedVersion[0]) : null;
+            const outputVersion = validSemver
                 ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
                 : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
-            const sanitizedInputVersion =
-                validSemver
-                ? `${sanitizeInputVersion(version)}`
-                : version
+
+            const sanitizedInputVersion = validSemver ? sanitizeInputVersion(version) : version;
 
             core.setOutput('version', outputVersion);
             core.setOutput('validSemver', validSemver);
-            core.setOutput('sanitizedInputVersion', validSemver);
+            core.setOutput('sanitizedInputVersion', sanitizedInputVersion);
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
