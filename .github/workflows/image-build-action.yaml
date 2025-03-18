@@ -198,18 +198,31 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
           format: cyclonedx-json
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
           output-file: sbom.cyclonedx.json
+
+      - name: Scan SBOM
+        uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
+        id: scan
+        with:
+          cache-db: true
+          fail-build: false
+          sbom: sbom.cyclonedx.json
 
       - name: Attest
         uses: actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68 # v2.2.0
         id: attest
         with:
+          push-to-registry: true
+          sbom-path: sbom.cyclonedx.json
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           subject-digest: ${{ steps.digest.outputs.digest }}
-          sbom-path: sbom.cyclonedx.json
-          push-to-registry: true
+
+      - name: Upload SARIF Report
+        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.11
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
 
       - if: ${{ !cancelled() && contains(steps.*.outcome, 'failure') }}
         name: Send Discord Webhook
