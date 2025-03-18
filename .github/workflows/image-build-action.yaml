@@ -148,6 +148,7 @@ jobs:
             const date = new Date();
             const parsedVersion = validSemverRegex.exec(version);
             const validSemver = parsedVersion != null;
+            const version = "${{ inputs.version }}";
 
             const parsedSemver =
                 validSemver
