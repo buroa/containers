@@ -132,14 +132,39 @@ jobs:
       - name: Install Semver
         run: npm install semver
 
-      - name: Determine Semver Compliance
+      - name: Determine definitive version
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        id: semver
+        id: version
         with:
           script: |
-            const semver = require('semver')
-            const version = "${{ inputs.version }}";
-            return semver.valid(`${version}`) !== null;
+            function sanitizeInputVersion(version) {
+                // Remove any pre-release suffixes
+                const output = version.split('-')[0];
+                return output;
+            }
+
+            const semver = require('semver');
+            const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
+            const date = new Date();
+            const parsedVersion = validSemverRegex.exec(version);
+            const validSemver = parsedVersion != null;
+
+            const parsedSemver =
+                validSemver
+                ? semver.coerce(parsedVersion[0])
+                : null;
+            const outputVersion =
+                validSemver
+                ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
+                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+            const sanitizedInputVersion =
+                validSemver
+                ? `${sanitizeInputVersion(version)}`
+                : version
+
+            core.setOutput('version', outputVersion);
+            core.setOutput('validSemver', validSemver);
+            core.setOutput('sanitizedInputVersion', validSemver);
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -148,10 +173,13 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),group=1,value=${{ inputs.version }}
-            type=match,pattern=^v?(\d+(\.\d+)),value=${{ inputs.version }},group=1,enable=${{ steps.semver.outputs.result }}
-            type=match,pattern=^v?(\d+),value=${{ inputs.version }},group=1,enable=${{ steps.semver.outputs.result }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=raw,value=${{ steps.version.outputs.sanitizedInputVersion }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=rolling
+          labels: |
+            org.opencontainers.image.version=${{ steps.version.outputs.sanitizedInputVersion }}
 
       - name: Push Images
         uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
