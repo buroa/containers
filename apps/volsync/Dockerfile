@@ -11,6 +11,8 @@ ENV CGO_ENABLED=0 \
     GOARM=${TARGETVARIANT}
 RUN go install -a -ldflags "-X=main.volsyncVersion=${VERSION}" github.com/backube/volsync@${VERSION}
 
+FROM quay.io/backube/volsync:${VERSION#*v} AS upstream
+
 FROM docker.io/library/alpine:3.21
 ARG TARGETPLATFORM
 ARG VERSION
@@ -35,8 +37,8 @@ RUN \
         && chmod a+rx /mover-restic/*.sh \
     && rm -rf /tmp/*
 
-COPY --from=quay.io/backube/volsync:${VERSION#*v} /usr/local/bin/rclone /usr/local/bin/rclone
-COPY --from=quay.io/backube/volsync:${VERSION#*v} /usr/local/bin/restic /usr/local/bin/restic
+COPY --from=upstream /usr/local/bin/rclone /usr/local/bin/rclone
+COPY --from=upstream /usr/local/bin/restic /usr/local/bin/restic
 COPY --from=volsync /go/bin/volsync /manager
 
 ENTRYPOINT ["/bin/bash"]
