@@ -74,7 +74,7 @@ jobs:
           if [[ ! -f ./apps/${{ inputs.app }}/tests.yaml ]]; then
             echo "tool=none" >> $GITHUB_OUTPUT
             exit 0
-          fi        
+          fi
           if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=goss" >> $GITHUB_OUTPUT
           else
