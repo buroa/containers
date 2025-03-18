@@ -97,7 +97,7 @@ jobs:
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
       attestations: write
-      contents: read
+      contents: write
       id-token: write
       packages: write
     strategy:
