@@ -132,21 +132,25 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: version
         with:
-          result-encoding: string
           script: |
             const semver = require('semver');
             const version = "${{ inputs.version }}";
-            const loose = true;
+            const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
+            const date = new Date();
 
-            if (semver.valid(version, loose)) {
-              let parsedVersion = semver.parse(version, loose);
-              core.setOutput('version', `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`);
-              core.setOutput('validSemver', true);
-            } else {
-              let date = new Date();
-              core.setOutput('version', `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`);
-              core.setOutput('validSemver', false);
-            }
+            const parsedVersion = validSemverRegex.exec(version);
+            const validSemver = parsedVersion != null;
+            const parsedSemver =
+                validSemver
+                ? semver.parse(parsedVersion[0])
+                : null;
+            const outputVersion =
+                validSemver
+                ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
+                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+
+            core.setOutput('version', outputVersion);
+            core.setOutput('validSemver', validSemver);
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -155,9 +159,10 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=match,pattern=^(\d+(\.\d+)?(\.\d+)?),group=1,value=${{ steps.version.outputs.version }}
-            type=match,pattern=^(\d+(\.\d+)),value=${{ steps.version.outputs.version }},group=1,enable=${{ steps.version.outputs.validSemver }}
-            type=match,pattern=^(\d+),value=${{ steps.version.outputs.version }},group=1,enable=${{ steps.version.outputs.validSemver }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=raw,value=${{ inputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=rolling
 
       - name: Push Images
