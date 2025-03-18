@@ -65,7 +65,7 @@ jobs:
             const yaml = require('yaml');
             const cwd = process.cwd();
 
-            let input =
+            const input =
               context.eventName === 'workflow_dispatch'
                 ? '${{ inputs.app }}'
                 : '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
