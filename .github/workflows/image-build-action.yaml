@@ -201,9 +201,10 @@ jobs:
         with:
           color: "0xFF0000"
           description: |
-            Version `${{ steps.version.outputs.version }}`
-            Click [here](https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml) rebuild the image.
+            Container: `${{ inputs.app }}`
+            Version: `${{ steps.version.outputs.version }}`
+            [View Logs](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) | [Rebuild](${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
-          title: "Container `ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}` build failed"
+          title: Container build failed
           username: GitHub Actions
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
