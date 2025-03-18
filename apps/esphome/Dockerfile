@@ -1,8 +1,6 @@
-FROM docker.io/library/python:3.13.2-alpine
+FROM docker.io/library/python:3.12-alpine
 
 ARG VERSION
-
-LABEL org.opencontainers.image.source="https://github.com/esphome/esphome"
 
 ENV \
   PYTHONDONTWRITEBYTECODE=1 \
@@ -11,8 +9,10 @@ ENV \
   PIP_NO_CACHE_DIR=1 \
   PIP_DISABLE_PIP_VERSION_CHECK=1 \
   PIP_BREAK_SYSTEM_PACKAGES=1 \
-  UV_SYSTEM_PYTHON=true \
   CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+  UV_SYSTEM_PYTHON=true
+
+ENV\
   HOME="/config" \
   PLATFORMIO_CORE_DIR=/cache/pio \
   ESPHOME_BUILD_PATH=/cache/build \
@@ -21,25 +21,24 @@ ENV \
 USER root
 WORKDIR /app
 
-RUN \
-  apk add --no-cache \
-    build-base \
-    catatonit \
-    gcompat \
-    git \
+#hadolint ignore=DL3018,DL3013
+RUN apk add --no-cache \
+        build-base \
+        catatonit \
+        gcompat \
+        git \
   && pip install uv \
   && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "setuptools" "esphome[displays]==${VERSION}" \
-  && mkdir /cache \
-  && chown nobody:nogroup /cache \
-  && rm -rf \
-    /tmp/* \
-    /wheels
+  && rm -rf /wheels /tmp/*
 
 COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
+
+WORKDIR /cache
 WORKDIR /config
-VOLUME ["/config", "/cache"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 CMD ["dashboard", "/config"]
+
+LABEL org.opencontainers.image.source="https://github.com/esphome/esphome"
