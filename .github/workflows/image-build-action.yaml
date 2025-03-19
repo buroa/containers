@@ -187,11 +187,6 @@ jobs:
           digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
-      - name: Store Version as Repo Variable
-        run: |
-          app=$(echo ${{ inputs.app }} | tr - _)
-          gh variable set "version_${app}" --body "${{ inputs.version }}:"
-
   sign:
     if: ${{ inputs.release }}
     needs: release
@@ -253,9 +248,20 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
-  notify:
+  version-state:
     if: ${{ inputs.release && !cancelled() }}
     needs: ["build", "release", "sign", "attest"]
+    name: Store Version State
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variable
+        run: |
+          app=$(echo ${{ inputs.app }} | tr - _)
+          gh variable set "version_${app}" --body "${{ inputs.version }}:${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}"
+
+  notify:
+    if: ${{ inputs.release && !cancelled() }}
+    needs: ["build", "release", "sign", "attest", "version-state"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
@@ -273,3 +279,4 @@ jobs:
           username: GitHub Actions
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
