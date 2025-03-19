@@ -1,0 +1,4 @@
+---
+# renovate: datasource=repology depName=alpine_3_21/transmission-daemon versioning=loose
+version: 4.0.6-r0
+name: transmission
