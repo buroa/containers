@@ -248,7 +248,7 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
-  version-state:
+  store:
     if: ${{ inputs.release && !cancelled() }}
     needs: ["build", "release", "sign", "attest"]
     name: Store Version State
@@ -261,7 +261,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["build", "release", "sign", "attest", "version-state"]
+    needs: ["build", "release", "sign", "attest", "store"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
