@@ -20,8 +20,10 @@ RUN \
         curl \
         findutils \
         geoip \
+        gettext \
         jo \
         jq \
+        moreutils \
         nano \
         p7zip \
         python3 \
