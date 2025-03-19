@@ -187,6 +187,11 @@ jobs:
           digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
+      - name: Store Version as Repo Variable
+        run: |
+          app=$(echo ${{ inputs.app }} | tr - _)
+          gh variable set "version_${app}" --body "${{ inputs.version }}:"
+
   sign:
     if: ${{ inputs.release }}
     needs: release
