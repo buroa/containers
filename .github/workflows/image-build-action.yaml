@@ -250,7 +250,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["release", "sign", "attest"]
+    needs: ["build", "release", "sign", "attest"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
