@@ -1,0 +1,4 @@
+---
+# renovate: datasource=github-releases depName=nzbgetcom/nzbget versioning=loose
+version: 24.8
+name: nzbget
