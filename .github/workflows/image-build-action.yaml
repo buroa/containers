@@ -248,9 +248,37 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
-  notify:
+  store-state:
     if: ${{ inputs.release && !cancelled() }}
     needs: ["build", "release", "sign", "attest"]
+    name: Store State
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # v1.11.6
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: Install Jo
+        run: sudo apt-get install -y jo
+
+      - name: Set Variable
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          key="app_$(echo ${{ inputs.app }} | tr - _)"
+          value=$(jo \
+              app="${{ inputs.app }}" \
+              version="${{ inputs.version }}" \
+              status="${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}" \
+          )
+          gh variable set "${key}" --body "${value}" --repo "${{ github.repository }}"
+
+  notify:
+    if: ${{ inputs.release && !cancelled() }}
+    needs: ["build", "release", "sign", "attest", "store-state"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
@@ -268,3 +296,4 @@ jobs:
           username: GitHub Actions
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
