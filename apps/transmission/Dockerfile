@@ -25,15 +25,14 @@ RUN \
         p7zip \
         python3 \
         transmission-daemon="${VERSION}" \
-        transmission-cli="${VERSION}" \
-        transmission-remote="${VERSION}" \
+        transmission-cli \
+        transmission-remote \
         trurl \
         tzdata
 
 #hadolint ignore=DL3059
 RUN chown -R root:root /usr/bin/transmission* \
     && chmod -R 755 /usr/bin/transmission* \
-    && ln -s /usr/bin/transmission-cli /app/transmission-cli \
     && ln -s /usr/bin/transmission-daemon /app/transmission-daemon \
     && ln -s /usr/share/transmission/public_html /app/web \
     && rm -rf /tmp/*
