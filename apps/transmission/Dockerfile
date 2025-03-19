@@ -38,7 +38,7 @@ RUN chown -R root:root /usr/bin/transmission* \
     && ln -s /usr/share/transmission/public_html /app/web \
     && rm -rf /tmp/*
 
-COPY ./settings.json.tmpl /app/settings.json.tmpl
+COPY ./settings.json.tpl /app/settings.json.tpl
 COPY ./entrypoint.sh /entrypoint.sh
 
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
