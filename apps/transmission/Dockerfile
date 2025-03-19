@@ -8,7 +8,7 @@ ENV HOME=/config \
     XDG_CONFIG_HOME=/config \
     XDG_DATA_HOME=/config \
     TRANSMISSION__RPC_PORT=9091 \
-    TRANSMISSION_WEB_HOME=/app/web
+    TRANSMISSION_WEB_HOME=/usr/share/transmission/public_html
 
 #hadolint ignore=DL3018
 RUN \
@@ -28,16 +28,10 @@ RUN \
         transmission-cli \
         transmission-remote \
         trurl \
-        tzdata
-
-#hadolint ignore=DL3059
-RUN chown -R root:root /usr/bin/transmission* \
-    && chmod -R 755 /usr/bin/transmission* \
-    && ln -s /usr/bin/transmission-daemon /app/transmission-daemon \
-    && ln -s /usr/share/transmission/public_html /app/web \
+        tzdata \
     && rm -rf /tmp/*
 
-COPY ./settings.json.tpl /app/settings.json.tpl
+COPY ./settings.json.tpl /settings.json.tpl
 COPY ./entrypoint.sh /entrypoint.sh
 
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
