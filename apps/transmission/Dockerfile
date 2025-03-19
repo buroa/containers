@@ -13,6 +13,7 @@ ENV HOME=/config \
 #hadolint ignore=DL3018
 RUN \
     apk add --no-cache \
+        bash \
         ca-certificates \
         catatonit \
         coreutils \
