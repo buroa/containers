@@ -1,0 +1,3 @@
+[tools]
+"aqua:itchyny/gojo" = "0.3.2"
+"aqua:regclient/regclient/regctl" = "0.8.2"
