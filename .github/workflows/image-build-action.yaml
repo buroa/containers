@@ -257,7 +257,7 @@ jobs:
       - name: Set Variable
         run: |
           app=$(echo ${{ inputs.app }} | tr - _)
-          gh variable set "version_${app}" --body "${{ inputs.version }}:${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}"
+          gh variable set "app_${app}" --body "${{ inputs.version }}:${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}"
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
