@@ -18,12 +18,9 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        findutils \
         geoip \
-        gettext \
         jo \
         jq \
-        moreutils \
         nano \
         p7zip \
         python3 \
@@ -32,7 +29,10 @@ RUN \
         transmission-remote \
         trurl \
         tzdata \
-    && rm -rf /tmp/*
+    && \
+    curl -sSfL https://github.com/mitsuhiko/minijinja/releases/latest/download/minijinja-cli-installer.sh | sh \
+    && \
+    rm -rf /tmp/*
 
 COPY ./settings.json.tpl /settings.json.tpl
 COPY ./entrypoint.sh /entrypoint.sh

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Update settings.json with environment variables
-envsubst < /settings.json.tpl > /config/settings.json
+minijinja-cli --env --trim-blocks --lstrip-blocks /settings.json.tpl > /config/settings.json
 
 if [[ "${TRANSMISSION__DEBUG}" == "true" ]]; then
     echo "Transmission starting with the following configuration..."
