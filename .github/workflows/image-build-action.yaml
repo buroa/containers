@@ -269,7 +269,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           key="app_$(echo ${{ inputs.app }} | tr - _)"
-          value=$(jo version="${{ inputs.version }}" status="${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}")
+          value=$(jo app="${{ inputs.app }}" version="${{ inputs.version }}" status="${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}")
           gh variable set "${key}" --body "${value}" --repo "${{ github.repository }}"
 
   notify:
