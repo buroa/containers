@@ -36,6 +36,8 @@ ENV HOME=/config \
 RUN \
     apk add --no-cache \
         bash \
+        catatonit \
+        coreutils \
         chromaprint \
         expat \
         ffmpeg \
@@ -67,10 +69,7 @@ RUN \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
     && \
     uv pip install \
-        git+https://github.com/sentriz/betanin.git \
-    && \
-    curl -sSfL https://github.com/mitsuhiko/minijinja/releases/latest/download/minijinja-cli-installer.sh | sh \
-    && rm -rf /tmp/*
+        git+https://github.com/sentriz/betanin.git
 
 COPY --from=betanin-client /src/betanin_client/dist/ /src/betanin_client/dist/
 COPY ./entrypoint.sh /entrypoint.sh
