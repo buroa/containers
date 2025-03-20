@@ -12,6 +12,8 @@ ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG VERSION
 
+WORKDIR /src
+
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
@@ -56,6 +58,7 @@ RUN \
         mpg123 \
         openjpeg \
         sqlite-libs \
+        tzdata \
     && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
         mp3gain \
@@ -65,12 +68,10 @@ RUN \
     && \
     uv pip install \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
-    && \
-    uv pip install \
         git+https://github.com/sentriz/betanin.git \
     && rm -rf /tmp/*
 
-COPY --from=betanin-client /src/betanin_client/dist/ /src/betanin_client/dist/
+COPY --from=betanin-client /src/betanin_client/dist/ /usr/local/lib/python3.12/site-packages/betanin_client/dist/
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./config-beets.yaml /config-beets.yaml
 COPY ./config-betanin.toml /config-betanin.toml
