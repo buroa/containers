@@ -3,93 +3,66 @@
 name: Retry Release
 
 on:
+  schedule:
+    - cron: "30 5 * * *"
   workflow_dispatch:
 
 jobs:
-  upstream:
-    name: Upstream Versions
+  repository:
+    name: Get Repository App Verisons
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.upstream.outputs.apps }}
+      apps: ${{ steps.repository.outputs.apps }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Gather all current app versions
-        id: upstream
-        run: |
-          apps=$(yq eval-all --indent 0 --output-format json '[.]' apps/*/metadata.yaml)
-          echo "apps=${apps}" >> $GITHUB_OUTPUT
+      - name: Output
+        id: repository
+        run: echo "apps=$(yq eval-all --indent 0 --output-format json '[.]' apps/*/metadata.yaml)" >> $GITHUB_OUTPUT
 
-  current:
-    if: ${{ needs.upstream.outputs.apps != '[]' }}
-    name: Current Versions
+  retry:
+    if: ${{ needs.repository.outputs.apps != '[]' }}
+    name: Retry Release
     runs-on: ubuntu-latest
-    needs: upstream
-    outputs:
-      app: ${{ steps.current.outputs.app }}
+    needs: repository
     strategy:
       matrix:
-        apps: ${{ fromJSON(needs.upstream.outputs.apps) }}
+        apps: ${{ fromJSON(needs.repository.outputs.apps) }}
       max-parallel: 4
       fail-fast: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Setup mise
-        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Generate Token
+        uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # v1.11.6
+        id: app-token
         with:
-          cache: false
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
-      - name: Get current version
-        id: current
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
+
+      - name: Install regctl
+        uses: regclient/actions/regctl-installer@main
+
+      - name: Registry Version
+        id: registry
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          version=$(\
-              regctl image inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.apps.name }}:rolling \
-                  | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' \
-          )
-          if [[ "${version}" != "${{ matrix.apps.version }}" ]]; then
-              echo "app=$(gojo $(gojo name="${{ matrix.apps.name }}" version="${version}"))" >> $GITHUB_OUTPUT
-          else
-              echo "app=[]" >> $GITHUB_OUTPUT
+          if ! version=$(regctl image inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.apps.name }}:rolling \
+              | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
+          then
+              echo "Failed to get registry version for ${{ matrix.apps.name }}"
+              exit 1
           fi
+          echo "version=${version}" >> $GITHUB_OUTPUT
 
-  build:
-    if: ${{ needs.current.outputs.app != '[]' }}
-    needs: current
-    name: Build ${{ matrix.app.name }}
-    uses: ./.github/workflows/image-build-action.yaml
-    permissions:
-      attestations: write
-      contents: read
-      id-token: write
-      packages: write
-      security-events: write
-    secrets: inherit
-    strategy:
-      matrix:
-        app: ${{ fromJSON(needs.current.outputs.app) }}
-      fail-fast: false
-    with:
-      app: ${{ matrix.app.name }}
-      version: ${{ matrix.app.version }}
-      release: false
-
-  status:
-    if: ${{ !cancelled() }}
-    needs: build
-    name: Build Success
-    runs-on: ubuntu-latest
-    steps:
-      - name: Any jobs failed?
-        if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
-
-      - name: All jobs passed or skipped?
-        if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
+      - if: ${{ matrix.apps.version != steps.registry.outputs.version }}
+        name: Retry Release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run release.yaml \
+              --repo ${{ github.repository }} \
+              -f app=${{ matrix.apps.name }} -f release=true
