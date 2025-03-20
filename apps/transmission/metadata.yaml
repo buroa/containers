@@ -1,4 +1,6 @@
 ---
+# NOTE: When updating the alpine version, remember to update the Dockerfile
+# file with the new alpine version number in the base image.
 # renovate: datasource=repology depName=alpine_3_21/transmission-daemon versioning=loose
 version: 4.0.6-r0
 name: transmission
