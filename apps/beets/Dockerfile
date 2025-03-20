@@ -74,7 +74,7 @@ RUN \
 COPY --from=betanin-client /src/betanin_client/dist/ /src/betanin_client/dist/
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./config-beets.yaml /config-beets.yaml
-COPY ./config-betanin.toml.j2 /config-betanin.toml
+COPY ./config-betanin.toml.tpl /config-betanin.toml.tpl
 
 USER nobody:nogroup
 WORKDIR /config

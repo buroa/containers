@@ -1,8 +1,8 @@
 [frontend]
-username = "{{ ENV.BETANIN_USERNAME }}"
-password = "{{ ENV.BETANIN_PASSWORD }}"
+username = "$BETANIN_USERNAME"
+password = "$BETANIN_PASSWORD"
 [clients]
-api_key = "{{ ENV.BETANIN_API_KEY }}"
+api_key = "$BETANIN_API_KEY"
 [server]
 num_parallel_jobs = 1
 [notifications.services]

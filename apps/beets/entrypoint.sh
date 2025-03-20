@@ -17,7 +17,7 @@ if [[ ! -d "${BETANINDIR}" ]]; then
 fi
 
 if [[ ! -f "${BETANINDIR}/config.toml" ]]; then
-    minijinja-cli --env /config-betanin.toml.j2 > "${BETANINDIR}/config.toml"
+    envsubst < /config-betanin.toml.tpl > "${BETANINDIR}/config.toml"
 fi
 
 exec \
