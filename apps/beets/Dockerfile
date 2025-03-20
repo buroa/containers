@@ -28,7 +28,7 @@ ENV \
 
 ENV HOME=/config \
     BETANIN_HOST=0.0.0.0 \
-    BETANIN_PORT=4030 \
+    BETANIN_PORT=8080 \
     FPCALC=/usr/bin/fpcalc
 
 RUN \

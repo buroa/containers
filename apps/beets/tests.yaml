@@ -4,8 +4,8 @@ process:
   betanin:
     running: true
 port:
-  tcp:4030:
+  tcp:8080:
     listening: true
 http:
-  http://localhost:4030:
+  http://localhost:8080:
     status: 500

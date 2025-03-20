@@ -3,6 +3,8 @@
 export BEETSDIR="/config/.config/beets"
 export BETANINDIR="/config/.config/betanin"
 
+export FLASK_DEBUG=true
+
 if [[ ! -f "${BEETSDIR}/config.yaml" ]]; then
     mkdir -p "${BEETSDIR}"
     cp /config-beets.yaml "${BEETSDIR}/config.yaml"
