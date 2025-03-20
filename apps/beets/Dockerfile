@@ -37,13 +37,13 @@ RUN \
     apk add --no-cache \
         bash \
         catatonit \
-        coreutils \
         chromaprint \
         expat \
         ffmpeg \
         ffmpeg-libs \
         fftw \
         flac \
+        gettext-envsubst \
         gdbm \
         git \
         gst-plugins-good \
@@ -69,7 +69,8 @@ RUN \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
     && \
     uv pip install \
-        git+https://github.com/sentriz/betanin.git
+        git+https://github.com/sentriz/betanin.git \
+    && rm -rf /tmp/*
 
 COPY --from=betanin-client /src/betanin_client/dist/ /src/betanin_client/dist/
 COPY ./entrypoint.sh /entrypoint.sh

@@ -21,5 +21,5 @@ if [[ ! -f "${BETANINDIR}/config.toml" ]]; then
 fi
 
 exec \
-    /usr/bin/betanin \
+    /usr/local/bin/betanin \
         "$@"
