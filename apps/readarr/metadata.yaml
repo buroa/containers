@@ -1,4 +1,4 @@
 ---
 # renovate: datasource=custom.servarr depName=readarr versioning=loose
-version: 0.4.12.2747
+version: 0.4.12.2753
 name: readarr
