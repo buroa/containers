@@ -100,6 +100,17 @@ Some applications do not support defining configuration via environment variable
 
 For applications that need to have persistent configuration data the config volume is hardcoded to `/config` inside the container. This is not able to be changed in most cases.
 
+## Contributing
+
+We encourage the use of upstream container images whenever possible. However, there are scenarios where using an upstream image may not be feasible—such as when tools like [s6-overlay](https://github.com/just-containers/s6-overlay) or [gosu](https://github.com/tianon/gosu) are needed, or when the application exhibits [unusual behaviors](https://github.com/nzbgetcom/nzbget/blob/989e848f8e9d3d4031f5d09d7b8945954a9f67b0/docker/entrypoint.sh#L17-L18), particularly when running as [root](https://github.com/plexinc/pms-docker/blob/8a42ea4c623e4df06928f945bcf8f450ba77fcf5/root/etc/cont-init.d/45-plex-hw-transcode-and-connected-tuner#L21). In such cases, contributing to this repository might make sense.
+
+If you’re considering contributing, please note that **we only accept pull requests** under the following conditions:
+
+- The upstream application is actively maintained,
+- **and** there is no official upstream container,
+- **or** the official image does not support multi-architecture builds,
+- **or** the official image relies on tools like s6-overlay, gosu, or other unconventional initialization mechanisms.
+
 ## Deprecations
 
 Containers here can be **deprecated** at any point, this could be for any reason described below.
