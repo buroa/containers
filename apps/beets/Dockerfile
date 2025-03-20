@@ -1,4 +1,4 @@
-FROM docker.io/library/node:16-alpine3.18 AS betanin-client
+FROM docker.io/library/node:22-alpine3.18 AS betanin-client
 WORKDIR /src
 RUN apk add git && \
     git clone https://github.com/sentriz/betanin.git . && \
