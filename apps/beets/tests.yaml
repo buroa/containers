@@ -8,4 +8,4 @@ port:
     listening: true
 http:
   http://localhost:8080:
-    status: 500
+    status: 200
