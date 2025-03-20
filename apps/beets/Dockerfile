@@ -6,7 +6,7 @@ RUN apk add git && \
     npm install && \
     PRODUCTION=true npm run-script build
 
-FROM docker.io/library/python:3.13-alpine
+FROM docker.io/library/python:3.12-alpine
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -43,7 +43,6 @@ RUN \
         ffmpeg-libs \
         fftw \
         flac \
-        gettext-envsubst \
         gdbm \
         git \
         gst-plugins-good \
@@ -75,7 +74,7 @@ RUN \
 COPY --from=betanin-client /src/betanin_client/dist/ /src/betanin_client/dist/
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./config-beets.yaml /config-beets.yaml
-COPY ./config-betanin.toml.tpl /config-betanin.toml.tpl
+COPY ./config-betanin.toml /config-betanin.toml
 
 USER nobody:nogroup
 WORKDIR /config

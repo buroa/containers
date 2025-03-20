@@ -1,8 +1,8 @@
 [frontend]
-username = "$BETANIN_USERNAME"
-password = "$BETANIN_PASSWORD"
+username = "beets"
+password = ""
 [clients]
-api_key = "$BETANIN_API_KEY"
+api_key = ""
 [server]
 num_parallel_jobs = 1
 [notifications.services]
