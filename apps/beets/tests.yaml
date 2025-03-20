@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
-  python3:
+  betanin:
     running: true
 port:
-  tcp6:4030:
+  tcp:4030:
     listening: true
 http:
   http://localhost:4030:
-    status: 200
+    status: 500

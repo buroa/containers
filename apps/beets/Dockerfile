@@ -27,10 +27,8 @@ ENV \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 ENV HOME=/config \
-    MODE=betanin \
     BETANIN_HOST=0.0.0.0 \
     BETANIN_PORT=4030 \
-    BEETSDIR=/config/.config/beets \
     FPCALC=/usr/bin/fpcalc
 
 RUN \
@@ -38,6 +36,7 @@ RUN \
         bash \
         catatonit \
         chromaprint \
+        curl \
         expat \
         ffmpeg \
         ffmpeg-libs \
