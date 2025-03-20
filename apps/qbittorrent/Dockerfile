@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.21
+FROM docker.io/library/python:3.13-alpine
 
 ARG TARGETPLATFORM
 ARG VERSION
@@ -29,8 +29,6 @@ RUN \
         jq \
         nano \
         p7zip \
-        python3 \
-        py3-pip \
         qt6-qtbase \
         qt6-qtbase-sqlite \
         trurl \
@@ -50,6 +48,8 @@ RUN \
 
 COPY ./qBittorrent.conf /app/qBittorrent.conf
 COPY ./entrypoint.sh /entrypoint.sh
+
+COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
 
 USER nobody:nogroup
 WORKDIR /config
