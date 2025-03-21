@@ -73,12 +73,6 @@ jobs:
           provenance: false
 
       - if: ${{ inputs.test }}
-        name: Install Testing Tools
-        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
-        with:
-          cache: false
-
-      - if: ${{ inputs.test }}
         name: Run Tests
         env:
           CONTAINER_RUNTIME: docker
@@ -88,13 +82,14 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          mise doctor
-          echo "======================================="
-          echo $PATH
-          echo "======================================="
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              curl -fsSL \
+                  https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-${{ matrix.platform }} \
+                  -o /usr/local/bin/container-structure-test
+              chmod +x /usr/local/bin/container-structure-test
               container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
           else
+              curl -fsSL https://goss.rocks/install | sh
               dgoss run ${{ steps.build.outputs.imageid }}
           fi
 
