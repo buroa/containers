@@ -187,10 +187,10 @@ jobs:
           digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
-  sign:
+  attest:
     if: ${{ inputs.release }}
     needs: release
-    name: Sign ${{ inputs.app }}
+    name: Attest ${{ inputs.app }}
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
@@ -205,19 +205,6 @@ jobs:
 
       - name: Sign Digest
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
-
-  attest:
-    if: ${{ inputs.release }}
-    needs: release
-    name: Attest ${{ inputs.app }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
 
       - name: Generate SBOM
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
@@ -250,7 +237,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["build", "release", "sign", "attest"]
+    needs: ["build", "release", "attest"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
