@@ -12,5 +12,6 @@ exec \
     /usr/bin/transmission-daemon \
         --foreground \
         --config-dir /config \
+        --log-level "${TRANMISSIONS__LOG_LEVEL:-info}" \
         --port "${TRANSMISSION__RPC_PORT:-9091}" \
         "$@"

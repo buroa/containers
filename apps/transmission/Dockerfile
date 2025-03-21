@@ -31,7 +31,13 @@ RUN \
         trurl \
         tzdata \
     && \
-    curl -sSfL https://github.com/mitsuhiko/minijinja/releases/latest/download/minijinja-cli-installer.sh | sh \
+    case "${TARGETPLATFORM}" in \
+        'linux/amd64') export ARCH="x86_64" ;; \
+        'linux/arm64') export ARCH="aarch64" ;; \
+    esac \
+    && \
+    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.8.0/minijinja-cli-${ARCH}-unknown-linux-musl.tar.xz \
+        | tar xJf - -C /usr/local/bin/ --strip-components=1 \
     && \
     rm -rf /tmp/*
 
