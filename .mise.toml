@@ -5,5 +5,5 @@
 
 [env]
 _.path = [
-  "~/.local/share/mise/installs/aqua-goss-org-goss-dgoss/latest/extras/dgoss"
+  "~/.local/share/mise/installs/aqua-goss-org-goss-dgoss/0.4.9/extras/dgoss",
 ]
