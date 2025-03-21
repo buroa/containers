@@ -22,8 +22,8 @@ RUN \
         wget \
         zstd \
     && \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') apt-get -qq install -y --no-install-recommends --no-install-suggests gcc ;; \
+    case "${TARGETARCH}" in \
+        'amd64') apt-get -qq install -y --no-install-recommends --no-install-suggests gcc ;; \
     esac \
     && curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${TARGETARCH}" -o /usr/local/bin/yq \
     && chmod +x /usr/local/bin/yq \
@@ -32,6 +32,6 @@ RUN \
 USER runner
 
 RUN \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" ;; \
+    case "${TARGETARCH}" in \
+        'amd64') /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" ;; \
     esac
