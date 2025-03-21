@@ -1,0 +1,9 @@
+[tools]
+"aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
+"aqua:goss-org/goss" = "0.4.9"
+"aqua:goss-org/goss/dgoss" = "0.4.9"
+
+[env]
+_.path = [
+  "~/.local/share/mise/installs/aqua-goss-org-goss-dgoss/latest/extras/dgoss"
+]

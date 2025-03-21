@@ -17,6 +17,10 @@ on:
         type: boolean
         description: Whether to release the app
         required: true
+      test:
+        type: boolean
+        description: Whether to test the app
+        required: true
 
 jobs:
   build:
@@ -68,29 +72,14 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - name: Determine Testing Tool
-        id: test
-        run: |
-          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=cst" >> $GITHUB_OUTPUT
-          else
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          fi
-
-      - if: ${{ steps.test.outputs.tool == 'cst' }}
-        name: Run container-structure-test
-        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
+      - if: ${{ inputs.test }}
+        name: Install Testing Tools
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
+          cache: false
 
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Setup goss
-        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
-        with:
-          version: latest
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Run goss
+      - if: ${{ inputs.test }}
+        name: Run Tests
         env:
           CONTAINER_RUNTIME: docker
           GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
@@ -99,7 +88,11 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          dgoss run ${{ steps.build.outputs.imageid }}
+          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
+          else
+              dgoss run ${{ steps.build.outputs.imageid }}
+          fi
 
       - if: ${{ inputs.release }}
         name: Export Digest
