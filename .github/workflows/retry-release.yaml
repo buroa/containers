@@ -67,4 +67,4 @@ jobs:
               --repo ${{ github.repository }} \
               -f app=${{ matrix.apps.name }} \
               -f release=true \
-              -f test=false
+              -f test=true
