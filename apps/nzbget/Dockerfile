@@ -14,19 +14,18 @@ WORKDIR /app
 #hadolint ignore=DL3013,DL3018
 RUN \
     apk add --no-cache \
-    bash \
-    ca-certificates \
-    catatonit \
-    coreutils \
-    curl \
-    jo \
-    jq \
-    nano \
-    p7zip \
-    trurl \
-    tzdata
-
-RUN \
+        bash \
+        ca-certificates \
+        catatonit \
+        coreutils \
+        curl \
+        jo \
+        jq \
+        nano \
+        p7zip \
+        trurl \
+        tzdata \
+    && \
     curl -fsSL -o /tmp/nzbget.run \
         "https://github.com/nzbgetcom/nzbget/releases/download/v${VERSION}/nzbget-${VERSION}-bin-linux.run" \
     && \
