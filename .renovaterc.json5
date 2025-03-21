@@ -50,7 +50,7 @@
       description: ["Allowed versions for Ubuntu"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
-      allowedVersions: "/24.04/",
+      allowedVersions: "/24\\.04/",
     },
     {
       description: ["Allowed versions for Bazarr and JBOPS"],
@@ -60,14 +60,14 @@
         "apps/jbops/Dockerfile",
       ],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3.12-alpine/",
+      allowedVersions: "/3\\.12-alpine/",
     },
     {
       description: ["Allowed versions for Beets"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/beets/Dockerfile"],
       matchPackageNames: ["/node/"],
-      allowedVersions: "/16-alpine3.18/",
+      allowedVersions: "/16-alpine3\\.18/",
     },
   ],
 }
