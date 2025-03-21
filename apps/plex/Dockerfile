@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:25.04
+FROM docker.io/library/ubuntu:24.04
 
 ARG TARGETARCH
 ARG VENDOR
