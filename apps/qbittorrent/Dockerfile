@@ -24,7 +24,6 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        geoip \
         jo \
         jq \
         nano \

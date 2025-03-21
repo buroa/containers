@@ -20,13 +20,13 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        geoip \
         jo \
         jq \
         nano \
         p7zip \
         transmission-daemon="${VERSION}" \
         transmission-cli \
+        transmission-extra \
         transmission-remote \
         trurl \
         tzdata \
