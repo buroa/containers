@@ -8,7 +8,7 @@
   "alt-speed-up": {{ ENV.TRANSMISSION__ALT_SPEED_UP | default(50) }},
   "bind-address-ipv4": {{ ENV.TRANSMISSION__BIND_ADDRESS_IPV4 | default('0.0.0.0') }},
   "bind-address-ipv6": {{ ENV.TRANSMISSION__BIND_ADDRESS_IPV6 | default('::') }},
-  "blocklist-enabled": {{ ENV.TRANSMISSION__BLOCKLIST_ENABLED | default(true) }},
+  "blocklist-enabled": {{ ENV.TRANSMISSION__BLOCKLIST_ENABLED | default(false) }},
   "blocklist-url": {{ ENV.TRANSMISSION__BLOCKLIST_URL | default('http://john.bitsurge.net/public/biglist.p2p.gz') }},
   "cache-size-mb": {{ ENV.TRANSMISSION__CACHE_SIZE_MB | default(4) }},
   "dht-enabled": {{ ENV.TRANSMISSION__DHT_ENABLED | default(true) }},

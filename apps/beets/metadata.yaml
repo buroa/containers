@@ -1,0 +1,4 @@
+---
+# renovate: datasource=github-releases depName=beetbox/beets
+version: v2.2.0
+name: beets
