@@ -71,6 +71,7 @@ RUN \
     uv pip install \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
         git+https://github.com/sentriz/betanin.git \
+    && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
