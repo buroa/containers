@@ -11,6 +11,7 @@ USER root
 RUN \
     apk add --no-cache \
         rsync \
+    && \
     apk add --no-cache --virtual=.build-deps \
         curl \
         tar \
