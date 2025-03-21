@@ -88,6 +88,7 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
+          mise doctor
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
           else
