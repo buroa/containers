@@ -45,7 +45,6 @@ RUN \
         fftw \
         flac \
         gdbm \
-        git \
         gst-plugins-good \
         gstreamer \
         imagemagick \
@@ -60,6 +59,9 @@ RUN \
         sqlite-libs \
         tzdata \
     && \
+    apk add --no-cache --virtual=.build-deps \
+        git \
+    && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
         mp3gain \
         mp3val \
@@ -69,6 +71,7 @@ RUN \
     uv pip install \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
         git+https://github.com/sentriz/betanin.git \
+    && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
 COPY --from=betanin-client /src/betanin_client/dist/ /usr/local/lib/python3.12/site-packages/betanin_client/dist/
