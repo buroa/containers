@@ -46,5 +46,28 @@
       automergeType: "pr",
       ignoreTests: false,
     },
+    {
+      description: ["Allowed Ubuntu versions for all container images"],
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/ubuntu/"],
+      allowedVersions: "/24\\.04/",
+    },
+    {
+      description: ["Allowed Python versions for Bazarr and JBOPS"],
+      matchDatasources: ["docker"],
+      matchFileNames: [
+        "apps/bazarr/Dockerfile",
+        "apps/jbops/Dockerfile",
+      ],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.12-alpine/",
+    },
+    {
+      description: ["Allowed Node versions for Beets"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/beets/Dockerfile"],
+      matchPackageNames: ["/node/"],
+      allowedVersions: "/16-alpine3\\.18/",
+    },
   ],
 }
