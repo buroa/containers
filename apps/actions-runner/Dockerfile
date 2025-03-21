@@ -17,15 +17,21 @@ RUN \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
         curl \
-        gcc \
         jo \
         moreutils \
         wget \
         zstd \
+    && \
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        apt-get -qq install -y --no-install-recommends --no-install-suggests gcc \
+    if \
     && curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${TARGETARCH}" -o /usr/local/bin/yq \
     && chmod +x /usr/local/bin/yq \
     && rm -rf /var/lib/apt/lists/*
 
 USER runner
 
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+RUN \
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; \
+    fi
