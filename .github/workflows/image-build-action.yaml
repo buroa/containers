@@ -89,7 +89,7 @@ jobs:
               chmod +x /usr/local/bin/container-structure-test
               container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
           else
-              curl -fsSL https://goss.rocks/install | sh
+              curl -fsSL https://raw.githubusercontent.com/goss-org/goss/5704120d25902119cb1139e04bca3db7742a9f73/install.sh | sh
               dgoss run ${{ steps.build.outputs.imageid }}
           fi
 
