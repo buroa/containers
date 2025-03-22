@@ -75,7 +75,6 @@ jobs:
       - if: ${{ inputs.test }}
         name: Run Tests
         env:
-          CONTAINER_RUNTIME: docker
           GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
