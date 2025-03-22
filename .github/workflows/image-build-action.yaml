@@ -73,13 +73,14 @@ jobs:
           provenance: false
 
       - if: ${{ inputs.test }}
-        name: Setup Testing Tool
+        name: Setup Testing Tools
         id: test
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          sudo apt update
-          sudo apt upgrade gh --yes
+          # TODO: Remove following two lines when the Runners support 2.69.0+ of the GH CLI
+          gh version
+          curl -fsSL https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_${{ matrix.platform }}.deb | sudo dpkg -i -
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=container-structure-test" >> $GITHUB_OUTPUT
               gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --dir /usr/local/bin --output container-structure-test
