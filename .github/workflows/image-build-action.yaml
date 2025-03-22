@@ -78,19 +78,13 @@ jobs:
         run: |
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=container-structure-test" >> $GITHUB_OUTPUT
-              curl -fsSL \
-                  https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-${{ matrix.platform }} \
-                  -o /usr/local/bin/container-structure-test
+              gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --dir /usr/local/bin --output container-structure-test
               chmod +rx /usr/local/bin/container-structure-test
           else
               echo "tool=goss" >> $GITHUB_OUTPUT
-              curl -fsSL \
-                  https://github.com/goss-org/goss/releases/latest/download/goss-linux-${{ matrix.platform }} \
-                  -o /usr/local/bin/goss
+              gh release download --repo goss-org/goss --pattern '*-linux-${{ matrix.platform }}' --dir /usr/local/bin --output goss
               chmod +rx /usr/local/bin/goss
-              curl -fsSL \
-                  https://github.com/goss-org/goss/releases/latest/download/dgoss \
-                  -o /usr/local/bin/dgoss
+              gh release download --repo goss-org/goss --pattern 'dgoss' --dir /usr/local/bin --output dgoss
               chmod +rx /usr/local/bin/dgoss
           fi
 
