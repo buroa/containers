@@ -1,36 +1,23 @@
-FROM ghcr.io/nginxinc/nginx-unprivileged:1.27
-
+FROM docker.io/library/python:3.13-alpine AS builder
 ARG TARGETPLATFORM
 ARG VERSION
-ARG CHANNEL
-
-USER root
-
 #hadolint ignore=DL3008
 RUN \
-    apt-get update \
-    && \
-    apt-get install -y --no-install-recommends --no-install-suggests python3 \
+    apk add --no-cache \
+        curl \
+        grep \
+        sed \
+        tar \
     && \
     curl -fsSL "https://github.com/themepark-dev/theme.park/archive/${VERSION}.tar.gz" \
-    | tar xzf - -C /tmp --strip-components 1 \
-    && \
-    python3 /tmp/themes.py \
-    && \
-    grep -rl 'https://theme-park.dev' /tmp | xargs sed -i 's/https\:\/\/theme-park.dev//g' \
-    && \
-    cp -r /tmp/css/ /usr/share/nginx/html \
-    && cp -r /tmp/resources/ /usr/share/nginx/html \
-    && cp /tmp/index.html /usr/share/nginx/html \
-    && apt-get remove -y python3 \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && chown -R nginx:nginx /usr/share/nginx/html \
-    && chmod -R 755 /usr/share/nginx/html \
-    && rm -rf /tmp/*
+        | tar xzf - -C /tmp --strip-components 1 \
+    && python /tmp/themes.py \
+    && grep -rl 'https://theme-park.dev' /tmp | xargs sed -i 's|https\://theme-park.dev||g'
 
+FROM ghcr.io/nginxinc/nginx-unprivileged:1.27
+COPY --from=builder --chown=nginx:nginx /tmp/index.html /usr/share/nginx/html
+COPY --from=builder --chown=nginx:nginx /tmp/css /usr/share/nginx/html
+COPY --from=builder --chown=nginx:nginx /tmp/resources /usr/share/nginx/html
 USER nginx
 WORKDIR /usr/share/nginx/html
-
 LABEL org.opencontainers.image.source="https://github.com/themepark-dev/theme.park"
