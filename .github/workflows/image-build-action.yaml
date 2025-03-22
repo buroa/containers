@@ -7,19 +7,19 @@ on:
     inputs:
       app:
         type: string
-        description: The name of the app to build
+        description: Application Name
         required: true
       version:
         type: string
-        description: The version of the app to build
+        description: Version
         required: true
       release:
         type: boolean
-        description: Whether to release the app
+        description: Release
         required: true
       test:
         type: boolean
-        description: Whether to test the app
+        description: Test
         required: true
 
 jobs:
