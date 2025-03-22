@@ -217,7 +217,6 @@ jobs:
         uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
         id: scan
         with:
-          cache-db: true
           fail-build: false
           sbom: ${{ inputs.app }}-sbom.spdx.json
 
