@@ -7,15 +7,19 @@ on:
     inputs:
       app:
         type: string
-        description: The name of the app to build
+        description: Application Name
         required: true
       version:
         type: string
-        description: The version of the app to build
+        description: Version
         required: true
       release:
         type: boolean
-        description: Whether to release the app
+        description: Release
+        required: true
+      test:
+        type: boolean
+        description: Test
         required: true
 
 jobs:
@@ -68,29 +72,8 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - name: Determine Testing Tool
-        id: test
-        run: |
-          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=cst" >> $GITHUB_OUTPUT
-          else
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          fi
-
-      - if: ${{ steps.test.outputs.tool == 'cst' }}
-        name: Run container-structure-test
-        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
-        with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Setup goss
-        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
-        with:
-          version: latest
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Run goss
+      - if: ${{ inputs.test }}
+        name: Run Tests
         env:
           CONTAINER_RUNTIME: docker
           GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
@@ -99,7 +82,16 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          dgoss run ${{ steps.build.outputs.imageid }}
+          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              curl -fsSL \
+                  https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-${{ matrix.platform }} \
+                  -o /usr/local/bin/container-structure-test
+              chmod +x /usr/local/bin/container-structure-test
+              container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
+          else
+              curl -fsSL https://raw.githubusercontent.com/goss-org/goss/5704120d25902119cb1139e04bca3db7742a9f73/install.sh | sh
+              dgoss run ${{ steps.build.outputs.imageid }}
+          fi
 
       - if: ${{ inputs.release }}
         name: Export Digest

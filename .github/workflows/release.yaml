@@ -12,13 +12,18 @@ on:
     inputs:
       app:
         type: string
-        description: The name of the app to build
+        description: Application Name
         required: true
       release:
         type: boolean
-        description: Whether to release the app
+        description: Release
         required: false
         default: false
+      test:
+        type: boolean
+        description: Test
+        required: false
+        default: true
 
 jobs:
   pre-job:
@@ -110,6 +115,7 @@ jobs:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
+      test: ${{ github.event_name == 'pull_request' }}
 
   status:
     if: ${{ !cancelled() }}
