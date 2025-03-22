@@ -13,7 +13,9 @@ RUN \
         | tar xzf - -C /tmp --strip-components 1 \
     && python /tmp/themes.py \
     && grep -rl 'https://theme-park.dev' /tmp | xargs sed -i 's|https\://theme-park.dev||g' \
-    && cp -r /tmp/{css,resources,index.html} /usr/share/nginx/html
+    && cp /tmp/index.html /usr/share/nginx/html \
+    && cp -r /tmp/css /usr/share/nginx/html \
+    && cp -r /tmp/resources /usr/share/nginx/html
 
 FROM ghcr.io/nginxinc/nginx-unprivileged:1.27
 COPY --from=builder --chown=nginx:nginx /usr/share/nginx/html /usr/share/nginx/html
