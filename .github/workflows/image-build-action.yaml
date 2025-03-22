@@ -73,22 +73,33 @@ jobs:
           provenance: false
 
       - if: ${{ inputs.test }}
-        name: Run Tests
+        name: Setup Testing Tools
+        id: test
         env:
-          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
-          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
-          GOSS_SLEEP: 2
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              curl -fsSL \
-                  https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-${{ matrix.platform }} \
-                  -o /usr/local/bin/container-structure-test
-              chmod +x /usr/local/bin/container-structure-test
-              container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
+              echo "tool=container-structure-test" >> $GITHUB_OUTPUT
+              gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --output container-structure-test
+              mv container-structure-test /usr/local/bin/container-structure-test && chmod +rx /usr/local/bin/container-structure-test
           else
-              curl -fsSL https://raw.githubusercontent.com/goss-org/goss/5704120d25902119cb1139e04bca3db7742a9f73/install.sh | sh
-              dgoss run ${{ steps.build.outputs.imageid }}
+              echo "tool=goss" >> $GITHUB_OUTPUT
+              gh release download --repo goss-org/goss --pattern '*-linux-${{ matrix.platform }}' --output goss
+              mv goss /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+              gh release download --repo goss-org/goss --pattern 'dgoss' --output dgoss
+              mv dgoss /usr/local/bin/dgoss && chmod +rx /usr/local/bin/dgoss
           fi
+
+      - if: ${{ inputs.test && steps.test.outputs.tool == 'container-structure-test' }}
+        name: Run Tests (container-structure-test)
+        run: container-structure-test test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
+
+      - if: ${{ inputs.test && steps.test.outputs.tool == 'goss' }}
+        name: Run Tests (Goss)
+        env:
+          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
+          GOSS_OPTS: --retry-timeout 60s --sleep 1s
+        run: dgoss run ${{ steps.build.outputs.imageid }}
 
       - if: ${{ inputs.release }}
         name: Export Digest
