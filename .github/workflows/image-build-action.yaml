@@ -78,6 +78,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
+          sudo apt update
+          sudo apt upgrade gh --yes
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=container-structure-test" >> $GITHUB_OUTPUT
               gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --dir /usr/local/bin --output container-structure-test
