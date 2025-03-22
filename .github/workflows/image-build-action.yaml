@@ -78,9 +78,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # TODO: Remove following two lines when the Runners support 2.69.0+ of the GH CLI
+          # TODO: We need GH CLI >=2.69.0 for --pattern and --output args to work together
           gh version
-          curl -fsSL https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_${{ matrix.platform }}.deb | sudo dpkg -i -
+          curl -fsSL https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_${{ matrix.platform }}.deb -o /tmp/cli.deb
+          sudo dpkg -i /tmp/cli.deb
+          gh version
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=container-structure-test" >> $GITHUB_OUTPUT
               gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --dir /usr/local/bin --output container-structure-test
