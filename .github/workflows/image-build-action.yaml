@@ -80,7 +80,7 @@ jobs:
         run: |
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               echo "tool=container-structure-test" >> $GITHUB_OUTPUT
-              gh release download --repo GoogleContainerTools/container-structure-test --pattern '*linux-${{ matrix.platform }}' --output container-structure-test
+              gh release download --repo GoogleContainerTools/container-structure-test --pattern '*-linux-${{ matrix.platform }}' --output container-structure-test
               mv container-structure-test /usr/local/bin/container-structure-test && chmod +rx /usr/local/bin/container-structure-test
           else
               echo "tool=goss" >> $GITHUB_OUTPUT
