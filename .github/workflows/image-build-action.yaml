@@ -76,6 +76,7 @@ jobs:
         name: Run Tests
         env:
           GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
+          GOSS_OPTS: --color --format documentation --retry-timeout 60s
         run: |
           if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
               curl -fsSL \
